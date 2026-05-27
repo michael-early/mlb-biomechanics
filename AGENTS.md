@@ -4,7 +4,7 @@ Guidance for AI coding agents working in this repository.
 
 ## Project Purpose
 
-`mlb-biomechanics` is a portfolio MVP for MLB quantitative roles. It uses public pitching biomechanics data from OpenBiomechanics and public Baseball Savant/Statcast data to engineer interpretable biomechanical metrics, model fastball velocity, and bridge pitch traits to on-field performance outcomes.
+`mlb-biomechanics` is a standalone MLB quantitative analysis project. It uses public pitching biomechanics data from OpenBiomechanics and public Baseball Savant/Statcast data to engineer interpretable biomechanical metrics, model fastball velocity, and bridge pitch traits to on-field performance outcomes.
 
 The core project standard is credibility: improve the baseball and modeling rigor without overstating what public anonymized data can prove.
 
@@ -66,8 +66,8 @@ If Streamlit is unavailable, use `reports/mvp_report.html`.
 - `src/mlb_biomechanics/metrics.py` - metric definitions
 - `src/mlb_biomechanics/modeling.py` - split, ridge model, evaluation, Statcast bridge
 - `src/mlb_biomechanics/report.py` - report generation
-- `docs/FUTURE_IMPROVEMENTS.md` - documented next-step roadmap and interview talking points
-- `reports/mvp_report.html` - portfolio report
+- `docs/FUTURE_IMPROVEMENTS.md` - documented next-step roadmap and discussion points
+- `reports/mvp_report.html` - generated project report
 
 ## Data Boundaries
 

@@ -1,6 +1,6 @@
 # Future Improvements: MLB Quant Rigor Upgrade
 
-This document is the implementation roadmap for turning the working MVP into a stronger MLB quantitative-analysis talking point. The priority is rigor: validation, uncertainty, model comparison, and a defensible baseball narrative.
+This document is the implementation roadmap for turning the working MVP into a stronger MLB quantitative-analysis project. The priority is rigor: validation, uncertainty, model comparison, and a defensible baseball narrative.
 
 ## Current MVP Limits
 
@@ -18,7 +18,7 @@ Implemented direction:
 - Report fold-level RMSE, MAE, and R2.
 - Report mean, standard deviation, and approximate confidence intervals across folds.
 
-Interview angle:
+Discussion point:
 
 > I treated session leakage as the first modeling risk. The validation design groups by session so a pitcher's repeated throws do not leak across train/test folds.
 
@@ -30,7 +30,7 @@ Implemented direction:
 - Keep ridge as the primary interpretable model unless a more complex model clearly wins and remains explainable.
 - Write model comparison outputs to `reports/tables/cv_model_comparison.csv`.
 
-Interview angle:
+Discussion point:
 
 > I did not jump straight to a black-box model. I benchmarked simple, interpretable models and a nonlinear baseline so the performance claim is anchored against reasonable alternatives.
 
@@ -46,7 +46,7 @@ Implemented direction:
   - `reports/tables/residual_diagnostics.csv`
   - `reports/tables/velocity_permutation_importance.csv`
 
-Interview angle:
+Discussion point:
 
 > The takeaway is not just a single RMSE. I added uncertainty and residual diagnostics to show where the model is reliable and where it needs more data.
 
@@ -59,7 +59,7 @@ Current direction:
 - The next data upgrade should use chunked daily/weekly Baseball Savant exports to build a 4-8 week or full-season Statcast dataset without range caps.
 - Keep this as a bridge, not a direct player-level join, unless identity-linked private data becomes available.
 
-Interview angle:
+Discussion point:
 
 > Public biomechanics data and public Statcast data answer adjacent questions. The bridge shows how I would structure the team version once private identity-linked data exists.
 
@@ -71,7 +71,7 @@ Implemented direction:
 - Separate observed evidence from future private-data extensions.
 - Keep limitations visible near the top of the report.
 
-Interview angle:
+Discussion point:
 
 > I designed the project to be technically honest. It shows what can be learned from public data and exactly what additional private data would unlock for a club.
 

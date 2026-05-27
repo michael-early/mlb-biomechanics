@@ -1,6 +1,6 @@
 # MLB Biomechanics MVP
 
-Implemented portfolio MVP for MLB quantitative roles: a reproducible Python pipeline that engineers pitching-biomechanics metrics, predicts pitch velocity, and bridges comparable pitch traits to on-field performance outcomes.
+Standalone MLB quantitative analysis project: a reproducible Python pipeline that engineers pitching-biomechanics metrics, predicts pitch velocity, and bridges comparable pitch traits to on-field performance outcomes.
 
 ## Thesis
 
@@ -107,7 +107,7 @@ data/raw/statcast/statcast_sample.csv
 data/raw/statcast/statcast.csv
 ```
 
-The bridge expects pitch-level columns such as `pitch_type`, `release_speed`, `release_extension`, `pfx_x`, `pfx_z`, and outcome columns if available (`whiff`, `chase`, `hard_hit`, `run_value`). If those outcome columns are not present, the bridge derives them from standard Baseball Savant columns where possible. The strongest portfolio version should still use a curated multi-week or full-season Statcast export.
+The bridge expects pitch-level columns such as `pitch_type`, `release_speed`, `release_extension`, `pfx_x`, `pfx_z`, and outcome columns if available (`whiff`, `chase`, `hard_hit`, `run_value`). If those outcome columns are not present, the bridge derives them from standard Baseball Savant columns where possible. The strongest analytical version should still use a curated multi-week or full-season Statcast export.
 
 ## Primary Public Sources
 
@@ -115,10 +115,6 @@ The bridge expects pitch-level columns such as `pitch_type`, `release_speed`, `r
 - OpenBiomechanics GitHub: https://github.com/drivelineresearch/openbiomechanics
 - Baseball Savant Statcast CSV docs: https://baseballsavant.mlb.com/csv-docs
 - pybaseball: https://pypi.org/project/pybaseball/
-
-## Resume Bullet
-
-Built an end-to-end Python ML pipeline using public OpenBiomechanics pitching motion-capture data to engineer interpretable biomechanical metrics, predict pitch velocity with grouped validation, and connect comparable pitch traits to Statcast-style whiff/run-value outcomes through a portfolio report and dashboard entry point.
 
 ## Limitations
 

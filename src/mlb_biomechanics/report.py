@@ -406,7 +406,7 @@ def write_report(
 
     <section class="section">
       <h2>Trait and Outcome Correlations</h2>
-      <p class="muted">These Statcast correlations use the local capped Baseball Savant sample. A chunked multi-month or full-season sample would be the next portfolio upgrade.</p>
+      <p class="muted">These Statcast correlations use the local capped Baseball Savant sample. A chunked multi-month or full-season sample would be the next analytical upgrade.</p>
       <div class="table-wrap">{_correlation_table(correlations)}</div>
     </section>
 
