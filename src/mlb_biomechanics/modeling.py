@@ -130,6 +130,34 @@ def permutation_importance(
 
 def statcast_performance_bridge(statcast: pd.DataFrame) -> dict[str, object]:
     df = statcast.copy()
+    if "description" in df.columns:
+        description = df["description"].astype(str)
+        swing_descriptions = {
+            "swinging_strike",
+            "swinging_strike_blocked",
+            "foul",
+            "foul_tip",
+            "foul_bunt",
+            "hit_into_play",
+            "hit_into_play_no_out",
+            "hit_into_play_score",
+        }
+        whiff_descriptions = {"swinging_strike", "swinging_strike_blocked", "foul_tip"}
+        swing = description.isin(swing_descriptions)
+        if "whiff" not in df.columns:
+            df["whiff"] = description.isin(whiff_descriptions).astype(int)
+        if "chase" not in df.columns and "zone" in df.columns:
+            zone = pd.to_numeric(df["zone"], errors="coerce")
+            df["chase"] = (swing & ~zone.between(1, 9)).astype(int)
+
+    if "hard_hit" not in df.columns and "launch_speed" in df.columns:
+        df["hard_hit"] = (pd.to_numeric(df["launch_speed"], errors="coerce") >= 95).astype(int)
+
+    if "delta_run_exp" in df.columns and "run_value" not in df.columns:
+        # Baseball Savant's delta_run_exp is from the batting/offense perspective.
+        # Multiply by -1 so positive values are better for the pitcher.
+        df["run_value"] = -pd.to_numeric(df["delta_run_exp"], errors="coerce")
+
     if "estimated_woba_using_speedangle" in df.columns and "run_value" not in df.columns:
         df["run_value"] = -pd.to_numeric(df["estimated_woba_using_speedangle"], errors="coerce")
 
@@ -163,4 +191,3 @@ def statcast_performance_bridge(statcast: pd.DataFrame) -> dict[str, object]:
             }
 
     return {"pitch_type_summary": grouped, "trait_outcome_correlations": correlations}
-

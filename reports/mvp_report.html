@@ -26,7 +26,7 @@
   <h2>Run Summary</h2>
   <div class="metric-grid">
     <div class="metric">Biomechanics source<strong>openbiomechanics_public_poi_metrics</strong></div>
-    <div class="metric">Performance source<strong>generated_statcast_like_sample</strong></div>
+    <div class="metric">Performance source<strong>user_supplied_statcast_csv</strong></div>
     <div class="metric">Train rows<strong>292</strong></div>
     <div class="metric">Test rows<strong>119</strong></div>
   </div>
@@ -184,48 +184,93 @@
   <tbody>
     <tr>
       <td>FF</td>
-      <td>516</td>
-      <td>94.181</td>
-      <td>0.461</td>
-      <td>0.558</td>
-      <td>0.688</td>
-      <td>-0.016</td>
-    </tr>
-    <tr>
-      <td>SL</td>
-      <td>263</td>
-      <td>94.048</td>
-      <td>0.479</td>
-      <td>0.532</td>
-      <td>0.715</td>
-      <td>-0.004</td>
+      <td>1147</td>
+      <td>93.914</td>
+      <td>0.116</td>
+      <td>0.112</td>
+      <td>0.085</td>
+      <td>0.012</td>
     </tr>
     <tr>
       <td>SI</td>
-      <td>169</td>
-      <td>94.673</td>
-      <td>0.538</td>
-      <td>0.592</td>
-      <td>0.680</td>
-      <td>-0.010</td>
+      <td>504</td>
+      <td>92.966</td>
+      <td>0.083</td>
+      <td>0.109</td>
+      <td>0.097</td>
+      <td>0.012</td>
+    </tr>
+    <tr>
+      <td>SL</td>
+      <td>467</td>
+      <td>84.949</td>
+      <td>0.141</td>
+      <td>0.154</td>
+      <td>0.071</td>
+      <td>0.007</td>
     </tr>
     <tr>
       <td>CH</td>
-      <td>164</td>
-      <td>94.033</td>
-      <td>0.457</td>
-      <td>0.616</td>
-      <td>0.640</td>
-      <td>-0.008</td>
+      <td>407</td>
+      <td>85.619</td>
+      <td>0.167</td>
+      <td>0.189</td>
+      <td>0.054</td>
+      <td>0.007</td>
+    </tr>
+    <tr>
+      <td>ST</td>
+      <td>388</td>
+      <td>82.195</td>
+      <td>0.124</td>
+      <td>0.155</td>
+      <td>0.059</td>
+      <td>0.012</td>
+    </tr>
+    <tr>
+      <td>FC</td>
+      <td>350</td>
+      <td>90.011</td>
+      <td>0.106</td>
+      <td>0.146</td>
+      <td>0.097</td>
+      <td>-0.024</td>
+    </tr>
+    <tr>
+      <td>FS</td>
+      <td>163</td>
+      <td>84.807</td>
+      <td>0.258</td>
+      <td>0.221</td>
+      <td>0.080</td>
+      <td>0.041</td>
     </tr>
     <tr>
       <td>CU</td>
-      <td>88</td>
-      <td>94.728</td>
-      <td>0.523</td>
-      <td>0.693</td>
-      <td>0.727</td>
-      <td>-0.039</td>
+      <td>150</td>
+      <td>78.998</td>
+      <td>0.153</td>
+      <td>0.160</td>
+      <td>0.033</td>
+      <td>0.009</td>
+    </tr>
+    <tr>
+      <td>SV</td>
+      <td>49</td>
+      <td>83.165</td>
+      <td>0.143</td>
+      <td>0.265</td>
+      <td>0.041</td>
+      <td>0.032</td>
+    </tr>
+    <tr>
+      <td>KC</td>
+      <td>44</td>
+      <td>84.250</td>
+      <td>0.227</td>
+      <td>0.273</td>
+      <td>0.091</td>
+      <td>0.047</td>
     </tr>
   </tbody>
 </table>
@@ -233,32 +278,32 @@
   <h2>Trait/Outcome Correlations</h2>
   <pre>{
   &quot;whiff&quot;: {
-    &quot;release_speed&quot;: 0.1661520231531696,
-    &quot;release_extension&quot;: 0.027426046871522086,
-    &quot;pfx_x&quot;: -0.0033912198853012594,
-    &quot;pfx_z&quot;: 0.05020372038251501,
-    &quot;plate_x&quot;: -0.020378266828778014
+    &quot;release_speed&quot;: -0.03560029699785607,
+    &quot;release_extension&quot;: 0.023737809595409467,
+    &quot;pfx_x&quot;: -0.009068368611087846,
+    &quot;pfx_z&quot;: -0.035699487076077695,
+    &quot;plate_x&quot;: 0.014895521538946976
   },
   &quot;chase&quot;: {
-    &quot;release_speed&quot;: 0.17889557312178708,
-    &quot;release_extension&quot;: -0.006335293114630886,
-    &quot;pfx_x&quot;: 0.022385262372771057,
-    &quot;pfx_z&quot;: 0.0575487270915236,
-    &quot;plate_x&quot;: -0.017814933472023568
+    &quot;release_speed&quot;: -0.06585946526182035,
+    &quot;release_extension&quot;: -0.017389713550118632,
+    &quot;pfx_x&quot;: 0.005261063531402644,
+    &quot;pfx_z&quot;: -0.0551303493706932,
+    &quot;plate_x&quot;: -0.010596279450733189
   },
   &quot;hard_hit&quot;: {
-    &quot;release_speed&quot;: -0.12655979795264027,
-    &quot;release_extension&quot;: -0.015997405392074445,
-    &quot;pfx_x&quot;: -0.0071812681076618015,
-    &quot;pfx_z&quot;: -0.11536105555397679,
-    &quot;plate_x&quot;: 0.012822253954436763
+    &quot;release_speed&quot;: 0.042053058036968426,
+    &quot;release_extension&quot;: -0.011208335948952772,
+    &quot;pfx_x&quot;: -0.018813932167694055,
+    &quot;pfx_z&quot;: 0.016681045085782508,
+    &quot;plate_x&quot;: -0.01272359428794911
   },
   &quot;run_value&quot;: {
-    &quot;release_speed&quot;: -0.03996306098645525,
-    &quot;release_extension&quot;: 0.0028463127400845866,
-    &quot;pfx_x&quot;: 0.0321662962948263,
-    &quot;pfx_z&quot;: -0.08504243991642094,
-    &quot;plate_x&quot;: 0.04268859413060041
+    &quot;release_speed&quot;: 0.010841353029071707,
+    &quot;release_extension&quot;: -0.001892988398758569,
+    &quot;pfx_x&quot;: -0.006492190992953657,
+    &quot;pfx_z&quot;: 0.0067957495397422485,
+    &quot;plate_x&quot;: 0.00022549228414860936
   }
 }</pre>
 
