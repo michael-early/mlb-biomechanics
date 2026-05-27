@@ -160,9 +160,9 @@
 <body>
   <header>
     <div class="header-inner">
-      <p class="eyebrow">Portfolio MVP | Baseball biomechanics and ML</p>
+      <p class="eyebrow">MLB Quant Rigor Upgrade | Baseball biomechanics and ML</p>
       <h1>MLB Biomechanics Performance Report</h1>
-      <p class="subtitle">A reproducible pitching-analysis pipeline that converts public motion-capture variables into interpretable biomechanical metrics, predicts pitch velocity, and bridges pitch traits to Statcast outcomes.</p>
+      <p class="subtitle">A reproducible pitching-analysis pipeline that converts public motion-capture variables into interpretable biomechanical metrics, validates fastball velocity models with grouped session splits, and bridges pitch traits to Statcast outcomes.</p>
     </div>
   </header>
 
@@ -176,11 +176,17 @@
       <div class="metric-grid">
         <div class="metric"><span>Biomechanics source</span><strong>OpenBiomechanics public pitching metrics</strong></div>
         <div class="metric"><span>Performance source</span><strong>Baseball Savant Statcast CSV</strong></div>
-        <div class="metric"><span>Velocity RMSE lift</span><strong>1.26 mph</strong></div>
-        <div class="metric"><span>Holdout rows</span><strong>119</strong></div>
+        <div class="metric"><span>Velocity RMSE lift</span><strong>1.18 mph</strong></div>
+        <div class="metric"><span>Validation groups</span><strong>100 sessions</strong></div>
+      </div>
+      <div class="metric-grid">
+        <div class="metric"><span>Statcast rows</span><strong>25,000</strong></div>
+        <div class="metric"><span>Statcast dates</span><strong>2025-04-24 to 2025-04-30</strong></div>
+        <div class="metric"><span>Pitch types</span><strong>16</strong></div>
+        <div class="metric"><span>Primary signal</span><strong>Kinetic-chain transfer</strong></div>
       </div>
       <div class="insight">
-        <strong>Main baseball finding:</strong> the engineered biomechanics model reduces pitch-speed error from 4.33 mph to 3.07 mph on the holdout split. The strongest signal is the kinetic-chain transfer score, followed by arm speed and sequencing efficiency.
+        <strong>Main baseball finding:</strong> kinetic-chain transfer is the strongest engineered signal for fastball velocity in the public OpenBiomechanics sample. The holdout ridge model reduces pitch-speed error from 4.33 mph to 3.15 mph, and the grouped validation framework is designed to avoid mixing pitches from the same session across train and test.
       </div>
     </section>
 
@@ -188,50 +194,177 @@
       <h2>Velocity Model</h2>
       <div class="metric-grid">
         <div class="metric"><span>Baseline RMSE</span><strong>4.33 mph</strong></div>
-        <div class="metric"><span>Ridge RMSE</span><strong>3.07 mph</strong></div>
-        <div class="metric"><span>Ridge MAE</span><strong>2.48 mph</strong></div>
-        <div class="metric"><span>Ridge R2</span><strong>0.48</strong></div>
+        <div class="metric"><span>Ridge RMSE</span><strong>3.15 mph</strong></div>
+        <div class="metric"><span>Ridge MAE</span><strong>2.61 mph</strong></div>
+        <div class="metric"><span>Selected alpha</span><strong>100.0</strong></div>
       </div>
     </section>
 
     <section class="section">
+      <h2>Grouped Cross-Validation Model Comparison</h2>
+      <p class="muted">All folds are grouped by session so the same athlete/session is never in both train and test for a fold. Ridge uses an inner grouped CV alpha search.</p>
+      <div class="table-wrap"><table class="dataframe data-table compact">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Model</th>
+      <th>RMSE mean</th>
+      <th>RMSE std</th>
+      <th>RMSE CI low</th>
+      <th>RMSE CI high</th>
+      <th>MAE mean</th>
+      <th>R2 mean</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>knn_k7</td>
+      <td>4.005</td>
+      <td>0.373</td>
+      <td>3.678</td>
+      <td>4.332</td>
+      <td>3.219</td>
+      <td>0.266</td>
+    </tr>
+    <tr>
+      <td>mean_baseline</td>
+      <td>4.763</td>
+      <td>0.264</td>
+      <td>4.532</td>
+      <td>4.995</td>
+      <td>3.782</td>
+      <td>-0.039</td>
+    </tr>
+    <tr>
+      <td>ols</td>
+      <td>3.493</td>
+      <td>0.443</td>
+      <td>3.104</td>
+      <td>3.881</td>
+      <td>2.663</td>
+      <td>0.438</td>
+    </tr>
+    <tr>
+      <td>ridge_alpha_grid</td>
+      <td>3.487</td>
+      <td>0.440</td>
+      <td>3.102</td>
+      <td>3.873</td>
+      <td>2.662</td>
+      <td>0.440</td>
+    </tr>
+  </tbody>
+</table></div>
+    </section>
+
+    <section class="section">
+      <h2>Bootstrap Uncertainty</h2>
+      <p class="muted">Holdout metrics are bootstrapped over prediction rows to show rough uncertainty around the reported point estimates.</p>
+      <div class="table-wrap"><table class="dataframe data-table compact">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Metric</th>
+      <th>Estimate</th>
+      <th>CI low</th>
+      <th>CI high</th>
+      <th>Bootstraps</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>rmse</td>
+      <td>3.153</td>
+      <td>2.819</td>
+      <td>3.491</td>
+      <td>500</td>
+    </tr>
+    <tr>
+      <td>mae</td>
+      <td>2.609</td>
+      <td>2.298</td>
+      <td>2.948</td>
+      <td>500</td>
+    </tr>
+    <tr>
+      <td>r2</td>
+      <td>0.456</td>
+      <td>0.299</td>
+      <td>0.563</td>
+      <td>500</td>
+    </tr>
+  </tbody>
+</table></div>
+    </section>
+
+    <section class="section">
       <h2>Most Important Velocity Features</h2>
-      <p class="muted">Permutation importance is measured as the increase in holdout RMSE after shuffling each metric.</p>
+      <p class="muted">Permutation importance is measured as the increase in holdout RMSE after repeated shuffles of each metric. Intervals show stability across repeated permutations.</p>
       <div class="table-wrap"><table class="dataframe data-table">
   <thead>
     <tr style="text-align: right;">
       <th>feature</th>
       <th>rmse_increase</th>
+      <th>rmse_increase_std</th>
+      <th>ci_lower</th>
+      <th>ci_upper</th>
+      <th>repeats</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td>kinetic_chain_transfer_score</td>
-      <td>1.390</td>
+      <td>1.068</td>
+      <td>0.140</td>
+      <td>0.858</td>
+      <td>1.350</td>
+      <td>50</td>
     </tr>
     <tr>
       <td>arm_speed_score</td>
-      <td>0.218</td>
-    </tr>
-    <tr>
-      <td>sequencing_efficiency</td>
-      <td>0.110</td>
-    </tr>
-    <tr>
-      <td>release_consistency_score</td>
-      <td>0.052</td>
-    </tr>
-    <tr>
-      <td>hip_shoulder_separation_score</td>
-      <td>0.008</td>
-    </tr>
-    <tr>
-      <td>lead_leg_block_score</td>
-      <td>-0.001</td>
+      <td>0.152</td>
+      <td>0.036</td>
+      <td>0.089</td>
+      <td>0.207</td>
+      <td>50</td>
     </tr>
     <tr>
       <td>lower_body_force_score</td>
-      <td>-0.008</td>
+      <td>0.099</td>
+      <td>0.089</td>
+      <td>-0.056</td>
+      <td>0.289</td>
+      <td>50</td>
+    </tr>
+    <tr>
+      <td>sequencing_efficiency</td>
+      <td>0.042</td>
+      <td>0.032</td>
+      <td>-0.018</td>
+      <td>0.095</td>
+      <td>50</td>
+    </tr>
+    <tr>
+      <td>release_consistency_score</td>
+      <td>0.024</td>
+      <td>0.017</td>
+      <td>-0.007</td>
+      <td>0.053</td>
+      <td>50</td>
+    </tr>
+    <tr>
+      <td>lead_leg_block_score</td>
+      <td>0.022</td>
+      <td>0.026</td>
+      <td>-0.027</td>
+      <td>0.068</td>
+      <td>50</td>
+    </tr>
+    <tr>
+      <td>hip_shoulder_separation_score</td>
+      <td>0.012</td>
+      <td>0.052</td>
+      <td>-0.095</td>
+      <td>0.103</td>
+      <td>50</td>
     </tr>
   </tbody>
 </table></div>
@@ -243,36 +376,95 @@
     <tr style="text-align: right;">
       <th>feature</th>
       <th>coefficient</th>
+      <th>alpha</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td>kinetic_chain_transfer_score</td>
-      <td>2.466</td>
+      <td>1.804</td>
+      <td>100.000</td>
     </tr>
     <tr>
       <td>hip_shoulder_separation_score</td>
-      <td>0.893</td>
-    </tr>
-    <tr>
-      <td>arm_speed_score</td>
-      <td>0.870</td>
+      <td>0.787</td>
+      <td>100.000</td>
     </tr>
     <tr>
       <td>lower_body_force_score</td>
-      <td>0.781</td>
+      <td>0.752</td>
+      <td>100.000</td>
+    </tr>
+    <tr>
+      <td>arm_speed_score</td>
+      <td>0.595</td>
+      <td>100.000</td>
     </tr>
     <tr>
       <td>sequencing_efficiency</td>
-      <td>0.431</td>
-    </tr>
-    <tr>
-      <td>release_consistency_score</td>
-      <td>0.278</td>
+      <td>0.402</td>
+      <td>100.000</td>
     </tr>
     <tr>
       <td>lead_leg_block_score</td>
-      <td>0.058</td>
+      <td>0.265</td>
+      <td>100.000</td>
+    </tr>
+    <tr>
+      <td>release_consistency_score</td>
+      <td>0.200</td>
+      <td>100.000</td>
+    </tr>
+  </tbody>
+</table></div>
+    </section>
+
+    <section class="section">
+      <h2>Residual Diagnostics</h2>
+      <p class="muted">Residual summaries by velocity band identify where the model is under- or over-performing.</p>
+      <div class="table-wrap"><table class="dataframe data-table compact">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Velocity band</th>
+      <th>Rows</th>
+      <th>Actual mph</th>
+      <th>Mean residual</th>
+      <th>MAE</th>
+      <th>RMSE</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>80-85</td>
+      <td>41</td>
+      <td>82.49</td>
+      <td>-2.22</td>
+      <td>2.25</td>
+      <td>2.89</td>
+    </tr>
+    <tr>
+      <td>85-90</td>
+      <td>42</td>
+      <td>87.59</td>
+      <td>0.99</td>
+      <td>2.26</td>
+      <td>2.89</td>
+    </tr>
+    <tr>
+      <td>90-95</td>
+      <td>20</td>
+      <td>91.20</td>
+      <td>4.14</td>
+      <td>4.14</td>
+      <td>4.32</td>
+    </tr>
+    <tr>
+      <td>&lt;80</td>
+      <td>16</td>
+      <td>78.41</td>
+      <td>-2.52</td>
+      <td>2.52</td>
+      <td>2.70</td>
     </tr>
   </tbody>
 </table></div>
@@ -346,93 +538,93 @@
   <tbody>
     <tr>
       <td>FF</td>
-      <td>1147</td>
-      <td>93.91</td>
-      <td>11.6%</td>
-      <td>11.2%</td>
-      <td>8.5%</td>
-      <td>0.01</td>
+      <td>7428</td>
+      <td>94.17</td>
+      <td>9.5%</td>
+      <td>9.3%</td>
+      <td>8.8%</td>
+      <td>-0.00</td>
     </tr>
     <tr>
       <td>SI</td>
-      <td>504</td>
-      <td>92.97</td>
-      <td>8.3%</td>
-      <td>10.9%</td>
-      <td>9.7%</td>
-      <td>0.01</td>
+      <td>4072</td>
+      <td>93.36</td>
+      <td>5.9%</td>
+      <td>9.6%</td>
+      <td>10.8%</td>
+      <td>0.00</td>
     </tr>
     <tr>
       <td>SL</td>
-      <td>467</td>
-      <td>84.95</td>
-      <td>14.1%</td>
-      <td>15.4%</td>
-      <td>7.1%</td>
-      <td>0.01</td>
+      <td>3497</td>
+      <td>85.68</td>
+      <td>16.2%</td>
+      <td>16.9%</td>
+      <td>8.3%</td>
+      <td>-0.00</td>
     </tr>
     <tr>
       <td>CH</td>
-      <td>407</td>
-      <td>85.62</td>
-      <td>16.7%</td>
-      <td>18.9%</td>
-      <td>5.4%</td>
-      <td>0.01</td>
+      <td>2597</td>
+      <td>85.63</td>
+      <td>14.5%</td>
+      <td>19.0%</td>
+      <td>7.5%</td>
+      <td>-0.00</td>
     </tr>
     <tr>
       <td>ST</td>
-      <td>388</td>
-      <td>82.19</td>
-      <td>12.4%</td>
-      <td>15.5%</td>
-      <td>5.9%</td>
-      <td>0.01</td>
+      <td>2076</td>
+      <td>82.17</td>
+      <td>13.6%</td>
+      <td>16.2%</td>
+      <td>6.2%</td>
+      <td>-0.00</td>
     </tr>
     <tr>
       <td>FC</td>
-      <td>350</td>
-      <td>90.01</td>
+      <td>1909</td>
+      <td>89.61</td>
       <td>10.6%</td>
-      <td>14.6%</td>
-      <td>9.7%</td>
-      <td>-0.02</td>
-    </tr>
-    <tr>
-      <td>FS</td>
-      <td>163</td>
-      <td>84.81</td>
-      <td>25.8%</td>
-      <td>22.1%</td>
-      <td>8.0%</td>
-      <td>0.04</td>
+      <td>12.7%</td>
+      <td>8.3%</td>
+      <td>-0.01</td>
     </tr>
     <tr>
       <td>CU</td>
-      <td>150</td>
-      <td>79.00</td>
-      <td>15.3%</td>
-      <td>16.0%</td>
-      <td>3.3%</td>
+      <td>1625</td>
+      <td>79.30</td>
+      <td>12.1%</td>
+      <td>16.1%</td>
+      <td>6.6%</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <td>FS</td>
+      <td>903</td>
+      <td>86.48</td>
+      <td>19.5%</td>
+      <td>24.9%</td>
+      <td>7.8%</td>
       <td>0.01</td>
     </tr>
     <tr>
-      <td>SV</td>
-      <td>49</td>
-      <td>83.17</td>
-      <td>14.3%</td>
-      <td>26.5%</td>
-      <td>4.1%</td>
-      <td>0.03</td>
+      <td>KC</td>
+      <td>417</td>
+      <td>82.24</td>
+      <td>14.9%</td>
+      <td>17.3%</td>
+      <td>8.4%</td>
+      <td>-0.01</td>
     </tr>
     <tr>
-      <td>KC</td>
-      <td>44</td>
-      <td>84.25</td>
-      <td>22.7%</td>
-      <td>27.3%</td>
-      <td>9.1%</td>
-      <td>0.05</td>
+      <td>FA</td>
+      <td>98</td>
+      <td>64.63</td>
+      <td>3.1%</td>
+      <td>7.1%</td>
+      <td>11.2%</td>
+      <td>-0.06</td>
     </tr>
   </tbody>
 </table></div>
@@ -440,7 +632,7 @@
 
     <section class="section">
       <h2>Trait and Outcome Correlations</h2>
-      <p class="muted">These one-day Statcast correlations are a pipeline check, not a final scouting conclusion. A full-season sample would be the next portfolio upgrade.</p>
+      <p class="muted">These Statcast correlations use the local capped Baseball Savant sample. A chunked multi-month or full-season sample would be the next portfolio upgrade.</p>
       <div class="table-wrap"><table class="dataframe data-table compact">
   <thead>
     <tr style="text-align: right;">
@@ -453,102 +645,102 @@
     <tr>
       <td>whiff</td>
       <td>release_speed</td>
-      <td>-0.036</td>
+      <td>-0.039</td>
     </tr>
     <tr>
       <td>whiff</td>
       <td>release_extension</td>
-      <td>0.024</td>
+      <td>0.014</td>
     </tr>
     <tr>
       <td>whiff</td>
       <td>pfx_x</td>
-      <td>-0.009</td>
+      <td>0.037</td>
     </tr>
     <tr>
       <td>whiff</td>
       <td>pfx_z</td>
-      <td>-0.036</td>
+      <td>-0.048</td>
     </tr>
     <tr>
       <td>whiff</td>
       <td>plate_x</td>
+      <td>0.028</td>
+    </tr>
+    <tr>
+      <td>chase</td>
+      <td>release_speed</td>
+      <td>-0.067</td>
+    </tr>
+    <tr>
+      <td>chase</td>
+      <td>release_extension</td>
       <td>0.015</td>
     </tr>
     <tr>
       <td>chase</td>
-      <td>release_speed</td>
-      <td>-0.066</td>
-    </tr>
-    <tr>
-      <td>chase</td>
-      <td>release_extension</td>
-      <td>-0.017</td>
-    </tr>
-    <tr>
-      <td>chase</td>
       <td>pfx_x</td>
-      <td>0.005</td>
+      <td>0.023</td>
     </tr>
     <tr>
       <td>chase</td>
       <td>pfx_z</td>
-      <td>-0.055</td>
+      <td>-0.082</td>
     </tr>
     <tr>
       <td>chase</td>
       <td>plate_x</td>
-      <td>-0.011</td>
+      <td>0.020</td>
     </tr>
     <tr>
       <td>hard_hit</td>
       <td>release_speed</td>
-      <td>0.042</td>
+      <td>0.026</td>
     </tr>
     <tr>
       <td>hard_hit</td>
       <td>release_extension</td>
-      <td>-0.011</td>
+      <td>0.003</td>
     </tr>
     <tr>
       <td>hard_hit</td>
       <td>pfx_x</td>
+      <td>-0.022</td>
+    </tr>
+    <tr>
+      <td>hard_hit</td>
+      <td>pfx_z</td>
+      <td>0.019</td>
+    </tr>
+    <tr>
+      <td>hard_hit</td>
+      <td>plate_x</td>
       <td>-0.019</td>
     </tr>
     <tr>
-      <td>hard_hit</td>
-      <td>pfx_z</td>
-      <td>0.017</td>
-    </tr>
-    <tr>
-      <td>hard_hit</td>
-      <td>plate_x</td>
-      <td>-0.013</td>
-    </tr>
-    <tr>
       <td>run_value</td>
       <td>release_speed</td>
-      <td>0.011</td>
+      <td>0.009</td>
     </tr>
     <tr>
       <td>run_value</td>
       <td>release_extension</td>
-      <td>-0.002</td>
+      <td>0.002</td>
     </tr>
     <tr>
       <td>run_value</td>
       <td>pfx_x</td>
+      <td>-0.005</td>
+    </tr>
+    <tr>
+      <td>run_value</td>
+      <td>pfx_z</td>
       <td>-0.006</td>
     </tr>
     <tr>
       <td>run_value</td>
-      <td>pfx_z</td>
-      <td>0.007</td>
-    </tr>
-    <tr>
-      <td>run_value</td>
       <td>plate_x</td>
-      <td>0.000</td>
+      <td>0.004</td>
     </tr>
   </tbody>
 </table></div>

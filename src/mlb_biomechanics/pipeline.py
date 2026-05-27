@@ -28,6 +28,11 @@ def build_mvp() -> dict[str, str]:
     importance_path = REPORTS_DIR / "tables" / "velocity_permutation_importance.csv"
     metric_dict_path = REPORTS_DIR / "tables" / "biomechanical_metric_dictionary.csv"
     statcast_summary_path = REPORTS_DIR / "tables" / "statcast_pitch_type_summary.csv"
+    pitcher_pitch_type_path = REPORTS_DIR / "tables" / "statcast_pitcher_pitch_type_summary.csv"
+    cv_model_comparison_path = REPORTS_DIR / "tables" / "cv_model_comparison.csv"
+    bootstrap_intervals_path = REPORTS_DIR / "tables" / "bootstrap_intervals.csv"
+    residual_diagnostics_path = REPORTS_DIR / "tables" / "residual_diagnostics.csv"
+    alpha_selection_path = REPORTS_DIR / "tables" / "ridge_alpha_selection.csv"
     model_metrics_path = PROCESSED_DIR / "velocity_model_metrics.json"
     data_sources_path = PROCESSED_DIR / "data_sources.json"
     report_path = REPORTS_DIR / "mvp_report.html"
@@ -38,12 +43,18 @@ def build_mvp() -> dict[str, str]:
     velocity_results["permutation_importance"].to_csv(importance_path, index=False)
     metric_dictionary().to_csv(metric_dict_path, index=False)
     statcast_results["pitch_type_summary"].to_csv(statcast_summary_path, index=False)
+    statcast_results["pitcher_pitch_type_summary"].to_csv(pitcher_pitch_type_path, index=False)
+    velocity_results["cv_model_comparison"].to_csv(cv_model_comparison_path, index=False)
+    velocity_results["bootstrap_intervals"].to_csv(bootstrap_intervals_path, index=False)
+    velocity_results["residual_diagnostics"].to_csv(residual_diagnostics_path, index=False)
+    velocity_results["alpha_selection"].to_csv(alpha_selection_path, index=False)
 
     model_metrics = {
         "train_rows": velocity_results["train_rows"],
         "test_rows": velocity_results["test_rows"],
         "baseline": velocity_results["baseline"],
         "ridge": velocity_results["ridge"],
+        "sessions": velocity_results["sessions"],
     }
     model_metrics_path.write_text(json.dumps(model_metrics, indent=2), encoding="utf-8")
     data_sources_path.write_text(
@@ -53,6 +64,10 @@ def build_mvp() -> dict[str, str]:
                 "metadata": metadata_source,
                 "metadata_rows": int(len(metadata)),
                 "statcast": statcast_source,
+                "statcast_rows": statcast_results["sample_summary"]["rows"],
+                "statcast_date_min": statcast_results["sample_summary"]["date_min"],
+                "statcast_date_max": statcast_results["sample_summary"]["date_max"],
+                "statcast_pitch_types": statcast_results["sample_summary"]["pitch_types"],
             },
             indent=2,
         ),
@@ -68,4 +83,9 @@ def build_mvp() -> dict[str, str]:
         "report": str(report_path),
         "metric_dictionary": str(metric_dict_path),
         "statcast_summary": str(statcast_summary_path),
+        "pitcher_pitch_type_summary": str(pitcher_pitch_type_path),
+        "cv_model_comparison": str(cv_model_comparison_path),
+        "bootstrap_intervals": str(bootstrap_intervals_path),
+        "residual_diagnostics": str(residual_diagnostics_path),
+        "alpha_selection": str(alpha_selection_path),
     }

@@ -30,11 +30,13 @@ Current local model result on OpenBiomechanics fastball data:
 - train: 292 rows / 75 sessions
 - test: 119 rows / 25 sessions
 - baseline RMSE: 4.33 mph
-- ridge RMSE: 3.07 mph
-- ridge R2: 0.48
+- ridge RMSE: 3.15 mph
+- ridge R2: 0.46
 - strongest current signal: `kinetic_chain_transfer_score`
 
-Current Statcast bridge uses a one-day Baseball Savant sample from April 1, 2025. Treat this as proof of pipeline, not as a final baseball conclusion.
+Current Statcast bridge uses a capped Baseball Savant range sample: 25,000 pitch rows across April 24-30, 2025 in the current local data. Treat this as a stronger pipeline sample, not as a final full-season baseball conclusion.
+
+The next source of truth for planned rigor work is `docs/FUTURE_IMPROVEMENTS.md`.
 
 ## Commands
 
@@ -64,6 +66,7 @@ If Streamlit is unavailable, use `reports/mvp_report.html`.
 - `src/mlb_biomechanics/metrics.py` - metric definitions
 - `src/mlb_biomechanics/modeling.py` - split, ridge model, evaluation, Statcast bridge
 - `src/mlb_biomechanics/report.py` - report generation
+- `docs/FUTURE_IMPROVEMENTS.md` - documented next-step roadmap and interview talking points
 - `reports/mvp_report.html` - portfolio report
 
 ## Data Boundaries
@@ -83,10 +86,10 @@ The defensible framing is:
 
 ## Next High-Value Improvements
 
-Prioritize these before adding visual polish:
+Prioritize these before adding visual polish. See `docs/FUTURE_IMPROVEMENTS.md` for the full documented plan:
 
 1. Replace the single holdout split with grouped K-fold cross-validation by `session`.
-2. Compare ridge against at least one nonlinear model that can run with available dependencies.
+2. Compare ridge against dependency-free baseline, OLS, ridge, and kNN models.
 3. Add bootstrap confidence intervals for RMSE, MAE, R2, and permutation importance.
 4. Add residual diagnostics by velocity band and session.
 5. Use a larger Statcast sample and aggregate by pitch type / pitcher / game context.
@@ -104,4 +107,3 @@ Prioritize these before adding visual polish:
 PYTHONPATH=src python3 -m mlb_biomechanics build
 PYTHONPATH=src python3 -m unittest discover -s tests
 ```
-
