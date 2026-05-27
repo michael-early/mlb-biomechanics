@@ -239,6 +239,24 @@ def write_report(
       padding: 14px 16px;
       margin: 22px 0;
     }}
+    .actions {{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 18px 0 4px;
+    }}
+    .button {{
+      display: inline-block;
+      border: 1px solid var(--accent-dark);
+      border-radius: 6px;
+      background: var(--accent-dark);
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 8px 12px;
+      text-decoration: none;
+    }}
+    .button:hover {{ opacity: 0.86; text-decoration: none; }}
     .metric-grid {{
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -328,6 +346,9 @@ def write_report(
       <p class="eyebrow">MLB Quant Rigor Upgrade | Baseball biomechanics and ML</p>
       <h1>MLB Biomechanics Performance Report</h1>
       <p class="subtitle">A reproducible pitching-analysis pipeline that converts public motion-capture variables into interpretable biomechanical metrics, validates fastball velocity models with grouped session splits, and bridges pitch traits to Statcast outcomes.</p>
+      <div class="actions">
+        <a class="button" href="https://github.com/michael-early/mlb-biomechanics" target="_blank" rel="noopener">View full project on GitHub</a>
+      </div>
     </div>
   </header>
 
