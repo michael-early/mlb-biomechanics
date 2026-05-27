@@ -5,33 +5,33 @@
 See: .planning/PROJECT.md (updated 2026-05-27)
 
 **Core value:** Create credible, interpretable biomechanical pitching metrics and show how they relate to measurable pitch performance without overstating public-data limitations.
-**Current focus:** Phase 1 - Data Foundation
+**Current focus:** MVP implemented - ready for Statcast data upgrade/polish
 
 ## Current Position
 
-Phase: 1 of 5 (Data Foundation)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-05-27 - Initialized project goal, project docs, requirements, roadmap, and research summary.
+Phase: MVP implementation complete
+Plan: N/A
+Status: Implemented MVP ready for review
+Last activity: 2026-05-27 - Implemented Python package, metric engineering, velocity model, performance bridge, report, optional Streamlit app, and tests.
 
-Progress: [----------] 0%
+Progress: [########--] 80%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 0
+- Total plans completed: MVP implementation pass complete
 - Average duration: N/A
-- Total execution time: 0.0 hours
+- Total execution time: See git history
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| Data Foundation | 0 | TBD | N/A |
+| MVP implementation | complete | complete | N/A |
 
 **Recent Trend:**
-- Last 5 plans: N/A
-- Trend: N/A
+- Last 5 plans: initialization, implementation
+- Trend: Moving from MVP to polish
 
 *Updated after each plan completion*
 
@@ -44,7 +44,8 @@ Recent decisions affecting current work:
 
 - Initialization: MVP is scoped to pitching biomechanics first.
 - Initialization: OpenBiomechanics is the biomechanics source; Baseball Savant/Statcast is the on-field performance source.
-- Initialization: Public-data limitations must be explicit; no direct deanonymized player linkage.
+- Implementation: Public-data limitations are explicit in README and generated report; no direct deanonymized player linkage.
+- Implementation: Current local run uses real OpenBiomechanics data and a generated Statcast-like sample unless a user-supplied Statcast CSV is added.
 
 ### Pending Todos
 
@@ -52,8 +53,7 @@ None yet.
 
 ### Blockers/Concerns
 
-- Need user preference before implementation on primary Statcast outcome: whiff rate, run value, chase rate, or hard-contact suppression.
-- Need user preference before implementation on pandas vs Polars and dashboard vs static report, unless defaults are accepted.
+- Portfolio polish should replace the generated Statcast-like sample with a curated Baseball Savant export for the strongest final story.
 
 ## Deferred Items
 
@@ -65,6 +65,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-27 10:39
-Stopped at: Project initialization docs created and ready for Phase 1 planning.
+Last session: 2026-05-27 10:45
+Stopped at: MVP implemented and verified with local tests/build.
 Resume file: None

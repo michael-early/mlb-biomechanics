@@ -1,0 +1,8 @@
+feature,rmse_increase
+kinetic_chain_transfer_score,1.3901722942099046
+arm_speed_score,0.2175741942744458
+sequencing_efficiency,0.11011188852625997
+release_consistency_score,0.052007894478553585
+hip_shoulder_separation_score,0.007767839239075425
+lead_leg_block_score,-0.0009764140897838836
+lower_body_force_score,-0.008290401746609888

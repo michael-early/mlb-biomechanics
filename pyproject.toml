@@ -1,0 +1,17 @@
+[project]
+name = "mlb-biomechanics"
+version = "0.1.0"
+description = "Pitching biomechanics metrics and MLB performance bridge for a portfolio MVP."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "numpy>=1.26",
+  "pandas>=2.0"
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 100
+

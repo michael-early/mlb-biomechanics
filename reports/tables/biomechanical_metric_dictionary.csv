@@ -1,0 +1,8 @@
+metric,baseball_interpretation,expected_direction
+sequencing_efficiency,Pelvis and torso speed with better peak timing.,Higher should generally support velocity if timing is efficient.
+hip_shoulder_separation_score,Magnitude of hip-shoulder separation near foot plant and max separation.,"Higher can indicate useful rotational stretch, within athlete-specific limits."
+kinetic_chain_transfer_score,"Pelvis-to-torso, thorax-to-arm, shoulder, and elbow transfer metrics.",Higher suggests more energy moving through the throwing chain.
+lead_leg_block_score,Lead-knee extension and lead-leg force indicators.,Higher can indicate a firmer front side and better rotational braking.
+lower_body_force_score,"Ground-reaction force, rate of force development, and center-of-gravity speed.",Higher reflects more lower-half force production.
+arm_speed_score,Shoulder internal rotation and elbow extension angular velocity.,Higher is directly related to arm speed and pitch velocity.
+release_consistency_score,"Within-session stability of arm slot, stride angle, and stride length.",Higher means less mechanical variation within the athlete session.

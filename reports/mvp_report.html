@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>MLB Biomechanics MVP Report</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 32px; color: #17202a; }
+    h1, h2 { color: #0b1f33; }
+    .callout { background: #eef6ff; border-left: 4px solid #2176c7; padding: 12px 16px; margin: 18px 0; }
+    .metric-grid { display: grid; grid-template-columns: repeat(4, minmax(140px, 1fr)); gap: 12px; }
+    .metric { border: 1px solid #d8dee9; border-radius: 8px; padding: 12px; }
+    .metric strong { display: block; font-size: 22px; margin-top: 4px; }
+    table.data-table { border-collapse: collapse; width: 100%; margin: 12px 0 24px; }
+    .data-table th, .data-table td { border-bottom: 1px solid #e4e7ec; padding: 8px; text-align: left; }
+    code { background: #f3f4f6; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>MLB Biomechanics MVP Report</h1>
+  <p>This report turns pitching biomechanics variables into interpretable metrics, predicts pitch velocity, and bridges comparable pitch traits to Statcast-style outcomes.</p>
+
+  <div class="callout">
+    <strong>Data limitation:</strong> OpenBiomechanics athletes are anonymized. This project does not claim direct player-level matching to MLB outcomes. It models biomechanics-to-velocity and separately models pitch-trait-to-outcome relationships.
+  </div>
+
+  <h2>Run Summary</h2>
+  <div class="metric-grid">
+    <div class="metric">Biomechanics source<strong>openbiomechanics_public_poi_metrics</strong></div>
+    <div class="metric">Performance source<strong>generated_statcast_like_sample</strong></div>
+    <div class="metric">Train rows<strong>292</strong></div>
+    <div class="metric">Test rows<strong>119</strong></div>
+  </div>
+
+  <h2>Velocity Model</h2>
+  <div class="metric-grid">
+    <div class="metric">Baseline RMSE<strong>4.33 mph</strong></div>
+    <div class="metric">Ridge RMSE<strong>3.07 mph</strong></div>
+    <div class="metric">Ridge MAE<strong>2.48 mph</strong></div>
+    <div class="metric">Ridge R2<strong>0.48</strong></div>
+  </div>
+
+  <h2>Biomechanical Metrics</h2>
+  <table class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>metric</th>
+      <th>baseball_interpretation</th>
+      <th>expected_direction</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>sequencing_efficiency</td>
+      <td>Pelvis and torso speed with better peak timing.</td>
+      <td>Higher should generally support velocity if timing is efficient.</td>
+    </tr>
+    <tr>
+      <td>hip_shoulder_separation_score</td>
+      <td>Magnitude of hip-shoulder separation near foot plant and max separation.</td>
+      <td>Higher can indicate useful rotational stretch, within athlete-specific limits.</td>
+    </tr>
+    <tr>
+      <td>kinetic_chain_transfer_score</td>
+      <td>Pelvis-to-torso, thorax-to-arm, shoulder, and elbow transfer metrics.</td>
+      <td>Higher suggests more energy moving through the throwing chain.</td>
+    </tr>
+    <tr>
+      <td>lead_leg_block_score</td>
+      <td>Lead-knee extension and lead-leg force indicators.</td>
+      <td>Higher can indicate a firmer front side and better rotational braking.</td>
+    </tr>
+    <tr>
+      <td>lower_body_force_score</td>
+      <td>Ground-reaction force, rate of force development, and center-of-gravity speed.</td>
+      <td>Higher reflects more lower-half force production.</td>
+    </tr>
+    <tr>
+      <td>arm_speed_score</td>
+      <td>Shoulder internal rotation and elbow extension angular velocity.</td>
+      <td>Higher is directly related to arm speed and pitch velocity.</td>
+    </tr>
+    <tr>
+      <td>release_consistency_score</td>
+      <td>Within-session stability of arm slot, stride angle, and stride length.</td>
+      <td>Higher means less mechanical variation within the athlete session.</td>
+    </tr>
+  </tbody>
+</table>
+
+  <h2>Most Important Velocity Features</h2>
+  <table class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>feature</th>
+      <th>rmse_increase</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>kinetic_chain_transfer_score</td>
+      <td>1.390</td>
+    </tr>
+    <tr>
+      <td>arm_speed_score</td>
+      <td>0.218</td>
+    </tr>
+    <tr>
+      <td>sequencing_efficiency</td>
+      <td>0.110</td>
+    </tr>
+    <tr>
+      <td>release_consistency_score</td>
+      <td>0.052</td>
+    </tr>
+    <tr>
+      <td>hip_shoulder_separation_score</td>
+      <td>0.008</td>
+    </tr>
+    <tr>
+      <td>lead_leg_block_score</td>
+      <td>-0.001</td>
+    </tr>
+    <tr>
+      <td>lower_body_force_score</td>
+      <td>-0.008</td>
+    </tr>
+  </tbody>
+</table>
+
+  <h2>Model Coefficients</h2>
+  <table class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>feature</th>
+      <th>coefficient</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>kinetic_chain_transfer_score</td>
+      <td>2.466</td>
+    </tr>
+    <tr>
+      <td>hip_shoulder_separation_score</td>
+      <td>0.893</td>
+    </tr>
+    <tr>
+      <td>arm_speed_score</td>
+      <td>0.870</td>
+    </tr>
+    <tr>
+      <td>lower_body_force_score</td>
+      <td>0.781</td>
+    </tr>
+    <tr>
+      <td>sequencing_efficiency</td>
+      <td>0.431</td>
+    </tr>
+    <tr>
+      <td>release_consistency_score</td>
+      <td>0.278</td>
+    </tr>
+    <tr>
+      <td>lead_leg_block_score</td>
+      <td>0.058</td>
+    </tr>
+  </tbody>
+</table>
+
+  <h2>Statcast Performance Bridge</h2>
+  <p>The bridge summarizes how public pitch traits relate to outcomes. If no user-supplied Statcast CSV is present, this section uses a generated Statcast-like sample and labels it accordingly.</p>
+  <table class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>pitch_type</th>
+      <th>pitches</th>
+      <th>avg_velocity</th>
+      <th>whiff_rate</th>
+      <th>chase_rate</th>
+      <th>hard_hit_rate</th>
+      <th>avg_run_value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FF</td>
+      <td>516</td>
+      <td>94.181</td>
+      <td>0.461</td>
+      <td>0.558</td>
+      <td>0.688</td>
+      <td>-0.016</td>
+    </tr>
+    <tr>
+      <td>SL</td>
+      <td>263</td>
+      <td>94.048</td>
+      <td>0.479</td>
+      <td>0.532</td>
+      <td>0.715</td>
+      <td>-0.004</td>
+    </tr>
+    <tr>
+      <td>SI</td>
+      <td>169</td>
+      <td>94.673</td>
+      <td>0.538</td>
+      <td>0.592</td>
+      <td>0.680</td>
+      <td>-0.010</td>
+    </tr>
+    <tr>
+      <td>CH</td>
+      <td>164</td>
+      <td>94.033</td>
+      <td>0.457</td>
+      <td>0.616</td>
+      <td>0.640</td>
+      <td>-0.008</td>
+    </tr>
+    <tr>
+      <td>CU</td>
+      <td>88</td>
+      <td>94.728</td>
+      <td>0.523</td>
+      <td>0.693</td>
+      <td>0.727</td>
+      <td>-0.039</td>
+    </tr>
+  </tbody>
+</table>
+
+  <h2>Trait/Outcome Correlations</h2>
+  <pre>{
+  &quot;whiff&quot;: {
+    &quot;release_speed&quot;: 0.1661520231531696,
+    &quot;release_extension&quot;: 0.027426046871522086,
+    &quot;pfx_x&quot;: -0.0033912198853012594,
+    &quot;pfx_z&quot;: 0.05020372038251501,
+    &quot;plate_x&quot;: -0.020378266828778014
+  },
+  &quot;chase&quot;: {
+    &quot;release_speed&quot;: 0.17889557312178708,
+    &quot;release_extension&quot;: -0.006335293114630886,
+    &quot;pfx_x&quot;: 0.022385262372771057,
+    &quot;pfx_z&quot;: 0.0575487270915236,
+    &quot;plate_x&quot;: -0.017814933472023568
+  },
+  &quot;hard_hit&quot;: {
+    &quot;release_speed&quot;: -0.12655979795264027,
+    &quot;release_extension&quot;: -0.015997405392074445,
+    &quot;pfx_x&quot;: -0.0071812681076618015,
+    &quot;pfx_z&quot;: -0.11536105555397679,
+    &quot;plate_x&quot;: 0.012822253954436763
+  },
+  &quot;run_value&quot;: {
+    &quot;release_speed&quot;: -0.03996306098645525,
+    &quot;release_extension&quot;: 0.0028463127400845866,
+    &quot;pfx_x&quot;: 0.0321662962948263,
+    &quot;pfx_z&quot;: -0.08504243991642094,
+    &quot;plate_x&quot;: 0.04268859413060041
+  }
+}</pre>
+
+  <h2>Next Private-Data Extension</h2>
+  <p>With team-owned, identity-linked motion-capture and game data, this same pipeline could evaluate whether a pitcher's biomechanical metric changes precede changes in MLB velocity, whiff rate, run value, or durability indicators.</p>
+</body>
+</html>
