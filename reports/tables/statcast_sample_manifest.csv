@@ -1,0 +1,11 @@
+field,value
+rows,25000
+date_min,2025-04-24
+date_max,2025-04-30
+pitch_types,16
+swings,11727
+out_of_zone_pitches,12391
+batted_balls,8257
+run_value_rows,24966
+pitcher_pitch_type_rows,1769
+rate_denominators,"whiff/swing, chase/out-of-zone, hard-hit/batted-ball"

@@ -20,9 +20,9 @@ except ModuleNotFoundError as exc:  # pragma: no cover - informational path
 
 ROOT = Path(__file__).resolve().parent
 
-st.set_page_config(page_title="MLB Biomechanics MVP", layout="wide")
-st.title("MLB Biomechanics MVP")
-st.caption("Biomechanical pitching metrics, velocity modeling, and Statcast performance bridge.")
+st.set_page_config(page_title="MLB Biomechanics Velocity Study", layout="wide")
+st.title("MLB Biomechanics Velocity Study")
+st.caption("Biomechanical pitching metrics, velocity modeling, and a separate Statcast bridge.")
 
 metrics_path = ROOT / "data" / "processed" / "biomechanics_metrics.csv"
 model_path = ROOT / "data" / "processed" / "velocity_model_metrics.json"
@@ -49,7 +49,6 @@ with right:
     st.dataframe(statcast, use_container_width=True)
 
 st.info(
-    "OpenBiomechanics athletes are anonymized. The MVP models biomechanics-to-velocity and "
+    "OpenBiomechanics athletes are anonymized. The project models biomechanics-to-velocity and "
     "separately relates public pitch traits to outcomes; it does not claim direct MLB identity linkage."
 )
-

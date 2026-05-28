@@ -1,8 +1,8 @@
 feature,coefficient,alpha
-kinetic_chain_transfer_score,1.8042881943214422,100.0
-hip_shoulder_separation_score,0.7869367780172036,100.0
-lower_body_force_score,0.7515411722652899,100.0
-arm_speed_score,0.5953486938439918,100.0
-sequencing_efficiency,0.40201125222157547,100.0
-lead_leg_block_score,0.26496294777225793,100.0
-release_consistency_score,0.19968191721467723,100.0
+kinetic_chain_transfer_score,2.616178774684512,10.0
+arm_speed_score,0.9158695177489284,10.0
+hip_shoulder_separation_score,0.7932539148287024,10.0
+lower_body_force_score,0.695267590152282,10.0
+sequencing_efficiency,0.4147624420098527,10.0
+release_consistency_score,0.2504800557933467,10.0
+lead_leg_block_score,0.07514268417653056,10.0

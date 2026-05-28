@@ -1,12 +1,12 @@
-# MLB Biomechanics MVP
+# MLB Biomechanics Velocity Study
 
-Standalone MLB quantitative analysis project: a reproducible Python pipeline that engineers pitching-biomechanics metrics, predicts pitch velocity, and bridges comparable pitch traits to on-field performance outcomes.
+Standalone MLB quantitative analysis project: a reproducible Python pipeline that engineers pitching-biomechanics metrics, predicts pitch velocity, and separately summarizes public Statcast pitch-trait outcomes.
 
 ## Thesis
 
-Public motion-capture data can be turned into interpretable biomechanical performance metrics that explain pitch velocity. Those metrics can then be connected to MLB performance analysis through a separate Statcast-style pitch-trait/outcome bridge.
+Public motion-capture data can be turned into interpretable biomechanical performance metrics that explain pitch velocity. Public Statcast data can then be used as an adjacent pitch-trait/outcome study, but not as a direct player-level join.
 
-The project is intentionally honest about public-data limits: OpenBiomechanics athletes are anonymized, so this MVP does **not** claim direct player-level matching to MLB outcomes.
+The project is intentionally honest about public-data limits: OpenBiomechanics athletes are anonymized, so this project does **not** claim direct player-level matching to MLB outcomes.
 
 ## What Runs Today
 
@@ -19,10 +19,11 @@ The project is intentionally honest about public-data limits: OpenBiomechanics a
   - lower-body force score
   - arm-speed score
   - release-consistency score
-- Trains a NumPy ridge-regression model to predict `pitch_speed_mph`.
-- Compares the model against a baseline mean predictor.
-- Produces feature coefficients and permutation importance.
+- Trains a leakage-safe NumPy ridge-regression model to predict `pitch_speed_mph`.
+- Compares mean baseline, OLS, ridge with inner-CV alpha selection, and kNN.
+- Produces feature coefficients, permutation importance, feature-set comparisons, ablations, and residual diagnostics.
 - Builds a Statcast performance bridge from a Baseball Savant CSV when present, otherwise from a clearly labeled generated Statcast-like sample.
+- Computes Statcast rates with baseball-valid denominators: whiff per swing, chase per out-of-zone pitch, and hard-hit per batted ball.
 - Writes a static HTML report and optional Streamlit dashboard entry point.
 - Includes unit tests using Python's built-in `unittest`.
 
@@ -62,19 +63,23 @@ On the downloaded OpenBiomechanics pitching data in this workspace:
 | Model | RMSE | MAE | R2 |
 |-------|------|-----|----|
 | Baseline mean predictor | 4.33 mph | 3.74 mph | -0.03 |
-| Ridge biomechanics model | 3.15 mph | 2.61 mph | 0.46 |
+| Ridge engineered-metrics model | 2.98 mph | 2.40 mph | 0.51 |
 
-The ridge model improves RMSE by about **1.18 mph** over baseline in the current grouped holdout split. The grouped K-fold comparison reports a ridge mean RMSE of about **3.49 mph** across folds, versus **4.76 mph** for the mean baseline.
+The ridge model improves holdout RMSE by about **1.35 mph** over baseline. Repeated grouped K-fold reports a ridge mean RMSE of about **3.51 mph**, versus **4.72 mph** for the mean baseline.
+
+The stricter feature-set comparison is more critical: raw biomechanical inputs currently outperform the engineered composites in repeated grouped CV, with raw-input ridge RMSE around **3.18 mph** versus **3.51 mph** for engineered metrics alone. The composites are interpretable, but they still need more validation before being treated as superior baseball metrics.
+
+High-velocity error remains a known weakness. On the current holdout, the model underpredicts 90+ mph pitches by about **3.08 mph** on average.
 
 ## Rigor Upgrade
 
-The project now includes a documented MLB quant rigor roadmap at [`docs/FUTURE_IMPROVEMENTS.md`](docs/FUTURE_IMPROVEMENTS.md). The implemented upgrade adds grouped K-fold validation, model comparison, ridge alpha selection, bootstrap intervals, residual diagnostics, and repeated permutation-importance stability checks.
+The project now includes a documented rigor roadmap at [`docs/FUTURE_IMPROVEMENTS.md`](docs/FUTURE_IMPROVEMENTS.md). The implemented upgrade adds leakage-safe metric transforms, repeated grouped K-fold validation, model comparison, ridge alpha selection, session-level bootstrap intervals, residual diagnostics, high-velocity error analysis, feature-set comparisons, metric ablations, and repeated permutation-importance stability checks.
 
 The current local performance bridge uses a larger Baseball Savant Statcast CSV sample. The current local file has 25,000 pitch rows across April 24-30, 2025 after Baseball Savant returned a capped range export. The pipeline derives:
 
-- `whiff` from swinging-strike pitch descriptions
-- `chase` from swings outside the strike-zone regions
-- `hard_hit` from batted balls with 95+ mph exit velocity
+- `whiff_rate` as whiffs per swing
+- `chase_rate` as chases per out-of-zone pitch
+- `hard_hit_rate` as hard-hit balls per batted ball
 - `run_value` as pitcher run value from `-delta_run_exp`
 
 ## Outputs
@@ -93,8 +98,14 @@ Generated by `PYTHONPATH=src python3 -m mlb_biomechanics build`:
 - `reports/tables/bootstrap_intervals.csv`
 - `reports/tables/residual_diagnostics.csv`
 - `reports/tables/ridge_alpha_selection.csv`
+- `reports/tables/feature_set_comparison.csv`
+- `reports/tables/metric_ablation.csv`
+- `reports/tables/metric_correlations.csv`
+- `reports/tables/velocity_band_performance.csv`
+- `reports/tables/high_velocity_error_analysis.csv`
 - `reports/tables/statcast_pitch_type_summary.csv`
 - `reports/tables/statcast_pitcher_pitch_type_summary.csv`
+- `reports/tables/statcast_sample_manifest.csv`
 
 The `data/` directory is gitignored because it contains downloaded/generated artifacts.
 
@@ -119,6 +130,9 @@ The bridge expects pitch-level columns such as `pitch_type`, `release_speed`, `r
 ## Limitations
 
 - OpenBiomechanics athletes are anonymized; no MLB player identity matching is attempted.
-- The checked-in MVP can run without real Statcast data by using a generated sample for the performance bridge, but the current local run uses a real Baseball Savant CSV sample.
+- The project can run without real Statcast data by using a generated sample for the performance bridge, but the current local run uses a real Baseball Savant CSV sample.
+- Engineered metric formulas are interpretable composites, not validated biomechanical gold standards.
+- Raw biomechanical inputs currently outperform engineered composites in repeated CV.
+- The current velocity model underpredicts the 90+ mph band and should not be used for high-velocity scouting claims without more work.
 - Results are associative and predictive, not causal.
 - Injury diagnosis and medical risk prediction are out of scope.

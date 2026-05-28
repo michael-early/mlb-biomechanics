@@ -33,6 +33,9 @@ def _pitch_summary_table(df: pd.DataFrame, max_rows: int = 10) -> str:
         "pitch_type": "Pitch",
         "pitches": "Pitches",
         "avg_velocity": "Avg velo",
+        "swings": "Swings",
+        "out_of_zone_pitches": "OOZ",
+        "batted_balls": "BIP",
         "whiff_rate": "Whiff",
         "chase_rate": "Chase",
         "hard_hit_rate": "Hard hit",
@@ -116,9 +119,12 @@ def _bootstrap_table(intervals: pd.DataFrame) -> str:
             "ci_lower": "CI low",
             "ci_upper": "CI high",
             "bootstrap_samples": "Bootstraps",
+            "bootstrap_unit": "Unit",
         }
     )
-    pretty = pretty[[col for col in ["Metric", "Estimate", "CI low", "CI high", "Bootstraps"] if col in pretty]]
+    pretty = pretty[
+        [col for col in ["Metric", "Estimate", "CI low", "CI high", "Bootstraps", "Unit"] if col in pretty]
+    ]
     for col in ["Estimate", "CI low", "CI high"]:
         if col in pretty:
             pretty[col] = pretty[col].map(lambda value: f"{value:.3f}")
@@ -144,6 +150,144 @@ def _residual_band_table(diagnostics: pd.DataFrame) -> str:
     return pretty.to_html(index=False, classes="data-table compact", border=0)
 
 
+def _feature_set_table(feature_sets: pd.DataFrame) -> str:
+    if feature_sets.empty:
+        return "<p class=\"muted\">Feature-set comparison was not available.</p>"
+    summary = feature_sets[
+        (feature_sets["row_type"] == "summary") & (feature_sets["metric"] == "rmse")
+    ].copy()
+    if summary.empty:
+        return "<p class=\"muted\">Feature-set comparison was not available.</p>"
+    pretty = summary[
+        [
+            "feature_set",
+            "feature_count",
+            "mean",
+            "std",
+            "ci_lower",
+            "ci_upper",
+            "rmse_delta_vs_best",
+        ]
+    ].copy()
+    pretty = pretty.rename(
+        columns={
+            "feature_set": "Feature set",
+            "feature_count": "Features",
+            "mean": "RMSE mean",
+            "std": "RMSE std",
+            "ci_lower": "CI low",
+            "ci_upper": "CI high",
+            "rmse_delta_vs_best": "Delta vs best",
+        }
+    ).sort_values("RMSE mean")
+    for col in ["RMSE mean", "RMSE std", "CI low", "CI high", "Delta vs best"]:
+        pretty[col] = pretty[col].map(lambda value: f"{value:.3f}")
+    return pretty.to_html(index=False, classes="data-table compact", border=0)
+
+
+def _ablation_table(ablation: pd.DataFrame) -> str:
+    if ablation.empty:
+        return "<p class=\"muted\">Metric ablation was not available.</p>"
+    pretty = ablation.copy().rename(
+        columns={
+            "feature_removed": "Feature removed",
+            "feature_count": "Features",
+            "rmse_mean": "RMSE mean",
+            "mae_mean": "MAE mean",
+            "r2_mean": "R2 mean",
+            "rmse_delta_vs_all": "RMSE delta",
+        }
+    )
+    pretty = pretty[
+        ["Feature removed", "Features", "RMSE mean", "MAE mean", "R2 mean", "RMSE delta"]
+    ].head(12)
+    for col in ["RMSE mean", "MAE mean", "R2 mean", "RMSE delta"]:
+        pretty[col] = pretty[col].map(lambda value: f"{value:.3f}")
+    return pretty.to_html(index=False, classes="data-table compact", border=0)
+
+
+def _metric_correlation_table(correlations: pd.DataFrame) -> str:
+    if correlations.empty:
+        return "<p class=\"muted\">Metric correlations were not available.</p>"
+    pretty = correlations.head(14).copy().rename(
+        columns={
+            "feature": "Feature",
+            "feature_type": "Type",
+            "pearson_corr_with_velocity": "Velocity corr",
+            "rows": "Rows",
+        }
+    )
+    pretty = pretty[["Feature", "Type", "Velocity corr", "Rows"]]
+    pretty["Velocity corr"] = pretty["Velocity corr"].map(lambda value: f"{value:.3f}")
+    return pretty.to_html(index=False, classes="data-table compact", border=0)
+
+
+def _high_velocity_table(high_velocity: pd.DataFrame) -> str:
+    if high_velocity.empty:
+        return "<p class=\"muted\">High-velocity diagnostics were not available.</p>"
+    pretty = high_velocity.copy().rename(
+        columns={
+            "group": "Group",
+            "rows": "Rows",
+            "mean_actual_mph": "Actual mph",
+            "mean_predicted_mph": "Predicted mph",
+            "mean_residual_mph": "Mean residual",
+            "mae": "MAE",
+            "rmse": "RMSE",
+            "underprediction_rate": "Underpredicted",
+            "overprediction_rate": "Overpredicted",
+        }
+    )
+    pretty = pretty[
+        [
+            "Group",
+            "Rows",
+            "Actual mph",
+            "Predicted mph",
+            "Mean residual",
+            "MAE",
+            "RMSE",
+            "Underpredicted",
+            "Overpredicted",
+        ]
+    ]
+    for col in ["Actual mph", "Predicted mph", "Mean residual", "MAE", "RMSE"]:
+        pretty[col] = pretty[col].map(lambda value: f"{value:.2f}")
+    for col in ["Underpredicted", "Overpredicted"]:
+        pretty[col] = (pretty[col] * 100).map(lambda value: f"{value:.1f}%")
+    return pretty.to_html(index=False, classes="data-table compact", border=0)
+
+
+def _sample_manifest_table(manifest: pd.DataFrame) -> str:
+    if manifest.empty:
+        return "<p class=\"muted\">Statcast sample manifest was not available.</p>"
+    pretty = manifest.rename(columns={"field": "Field", "value": "Value"})
+    return pretty.to_html(index=False, classes="data-table compact", border=0)
+
+
+def _model_card_table(velocity_results: dict[str, object], statcast_results: dict[str, object]) -> str:
+    ridge = velocity_results["ridge"]
+    baseline = velocity_results["baseline"]
+    statcast_sample = statcast_results["sample_summary"]
+    rows = [
+        ("Primary target", "pitch_speed_mph"),
+        ("Biomechanics validation unit", "session"),
+        ("Holdout rows", velocity_results["test_rows"]),
+        ("Holdout sessions", velocity_results["test_sessions"]),
+        ("Baseline RMSE", f"{baseline['rmse']:.2f} mph"),
+        ("Ridge RMSE", f"{ridge['rmse']:.2f} mph"),
+        ("Primary model", f"ridge regression, alpha={ridge['alpha']:.1f}"),
+        ("CV design", "repeated grouped K-fold by session with inner alpha selection"),
+        ("Bootstrap unit", "session"),
+        ("Statcast rows", f"{statcast_sample['rows']:,}"),
+        ("Statcast denominator policy", "whiff/swing, chase/out-of-zone, hard-hit/batted-ball"),
+        ("Use boundary", "predictive association only; no causal or identity-linked MLB claim"),
+    ]
+    return pd.DataFrame(rows, columns=["Item", "Value"]).to_html(
+        index=False, classes="data-table compact", border=0
+    )
+
+
 def write_report(
     output_path: Path,
     biomech_source: str,
@@ -159,6 +303,10 @@ def write_report(
     cv_summary = velocity_results["cv_model_comparison"]
     bootstrap_intervals = velocity_results["bootstrap_intervals"]
     residual_diagnostics = velocity_results["residual_diagnostics"]
+    feature_set_comparison = velocity_results["feature_set_comparison"]
+    metric_ablation = velocity_results["metric_ablation"]
+    metric_correlations = velocity_results["metric_correlations"]
+    high_velocity = velocity_results["high_velocity_error_analysis"]
     statcast_sample = statcast_results["sample_summary"]
     biomech_source_label = _source_label(biomech_source)
     statcast_source_label = _source_label(statcast_source)
@@ -168,7 +316,7 @@ def write_report(
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MLB Biomechanics MVP Report</title>
+  <title>MLB Biomechanics Velocity Study</title>
   <style>
     :root {{
       --ink: #18212f;
@@ -344,8 +492,8 @@ def write_report(
   <header>
     <div class="header-inner">
       <p class="eyebrow">MLB Quant Rigor Upgrade | Baseball biomechanics and ML</p>
-      <h1>MLB Biomechanics Performance Report</h1>
-      <p class="subtitle">A reproducible pitching-analysis pipeline that converts public motion-capture variables into interpretable biomechanical metrics, validates fastball velocity models with grouped session splits, and bridges pitch traits to Statcast outcomes.</p>
+      <h1>MLB Biomechanics Velocity Study</h1>
+      <p class="subtitle">A reproducible pitching-analysis pipeline that converts public motion-capture variables into interpretable biomechanical metrics, validates fastball velocity models with grouped session splits, and separately summarizes public Statcast pitch-trait outcomes.</p>
       <div class="actions">
         <a class="button" href="https://github.com/michael-early/mlb-biomechanics" target="_blank" rel="noopener">View full project on GitHub</a>
       </div>
@@ -372,8 +520,14 @@ def write_report(
         <div class="metric"><span>Primary signal</span><strong>Kinetic-chain transfer</strong></div>
       </div>
       <div class="insight">
-        <strong>Main baseball finding:</strong> kinetic-chain transfer is the strongest engineered signal for fastball velocity in the public OpenBiomechanics sample. The holdout ridge model reduces pitch-speed error from {baseline["rmse"]:.2f} mph to {ridge["rmse"]:.2f} mph, and the grouped validation framework is designed to avoid mixing pitches from the same session across train and test.
+        <strong>Main baseball finding:</strong> kinetic-chain transfer is the strongest engineered signal for fastball velocity in the public OpenBiomechanics sample. The holdout ridge model reduces pitch-speed error from {baseline["rmse"]:.2f} mph to {ridge["rmse"]:.2f} mph, and validation is grouped by session so a pitcher's repeated throws do not leak across train and test.
       </div>
+    </section>
+
+    <section class="section">
+      <h2>Model Card</h2>
+      <p class="muted">This section defines the modeling boundary, validation unit, and intended interpretation before presenting feature-level results.</p>
+      <div class="table-wrap">{_model_card_table(velocity_results, statcast_results)}</div>
     </section>
 
     <section class="section">
@@ -394,8 +548,26 @@ def write_report(
 
     <section class="section">
       <h2>Bootstrap Uncertainty</h2>
-      <p class="muted">Holdout metrics are bootstrapped over prediction rows to show rough uncertainty around the reported point estimates.</p>
+      <p class="muted">Holdout metrics are bootstrapped by session to respect repeated pitches within the same held-out session.</p>
       <div class="table-wrap">{_bootstrap_table(bootstrap_intervals)}</div>
+    </section>
+
+    <section class="section">
+      <h2>Feature-Set Comparison</h2>
+      <p class="muted">This checks whether engineered composites add value beyond the raw metric inputs and whether simple interaction terms help.</p>
+      <div class="table-wrap">{_feature_set_table(feature_set_comparison)}</div>
+    </section>
+
+    <section class="section">
+      <h2>Metric Ablation</h2>
+      <p class="muted">Rows show how repeated grouped-CV RMSE changes when each engineered metric is removed from the ridge model. Positive delta means removing that metric made the model worse.</p>
+      <div class="table-wrap">{_ablation_table(metric_ablation)}</div>
+    </section>
+
+    <section class="section">
+      <h2>Metric Correlations</h2>
+      <p class="muted">Descriptive Pearson correlations show which raw and engineered biomechanics fields move with pitch velocity before multivariable modeling.</p>
+      <div class="table-wrap">{_metric_correlation_table(metric_correlations)}</div>
     </section>
 
     <section class="section">
@@ -412,6 +584,9 @@ def write_report(
       <h2>Residual Diagnostics</h2>
       <p class="muted">Residual summaries by velocity band identify where the model is under- or over-performing.</p>
       <div class="table-wrap">{_residual_band_table(residual_diagnostics)}</div>
+      <h3>High-Velocity Error Check</h3>
+      <p class="muted">This explicitly checks the 90+ mph region, where underprediction is the most baseball-relevant failure mode.</p>
+      <div class="table-wrap">{_high_velocity_table(high_velocity)}</div>
     </section>
 
     <section class="section">
@@ -421,8 +596,10 @@ def write_report(
 
     <section class="section">
       <h2>Statcast Performance Bridge</h2>
-      <p>The bridge summarizes how public pitch traits relate to outcomes. With a Baseball Savant CSV, whiffs, chases, hard-hit balls, and pitcher run value are derived from standard Statcast columns.</p>
+      <p>The bridge summarizes how public pitch traits relate to outcomes. With a Baseball Savant CSV, whiff rate is computed per swing, chase rate per out-of-zone pitch, and hard-hit rate per batted ball.</p>
       <div class="table-wrap">{_pitch_summary_table(statcast_results["pitch_type_summary"], max_rows=10)}</div>
+      <h3>Sample Manifest</h3>
+      <div class="table-wrap">{_sample_manifest_table(statcast_results["sample_manifest"])}</div>
     </section>
 
     <section class="section">

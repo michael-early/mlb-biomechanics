@@ -4,21 +4,23 @@ Guidance for AI coding agents working in this repository.
 
 ## Project Purpose
 
-`mlb-biomechanics` is a standalone MLB quantitative analysis project. It uses public pitching biomechanics data from OpenBiomechanics and public Baseball Savant/Statcast data to engineer interpretable biomechanical metrics, model fastball velocity, and bridge pitch traits to on-field performance outcomes.
+`mlb-biomechanics` is a standalone MLB quantitative analysis project. It uses public pitching biomechanics data from OpenBiomechanics to engineer interpretable metrics and model fastball velocity. It also uses public Baseball Savant/Statcast data for a separate pitch-trait/outcome bridge.
 
 The core project standard is credibility: improve the baseball and modeling rigor without overstating what public anonymized data can prove.
 
 ## Current State
 
-Implemented MVP:
+Implemented study:
 
 - Python package under `src/mlb_biomechanics/`
 - CLI entry point: `PYTHONPATH=src python3 -m mlb_biomechanics`
 - OpenBiomechanics ingestion from public CSVs
 - Baseball Savant/Statcast CSV ingestion
 - Engineered biomechanics metrics
-- Ridge-regression velocity model
-- Statcast bridge for whiff, chase, hard-hit, and pitcher run value
+- Leakage-safe train-fit/test-transform metric construction
+- Ridge-regression velocity model with repeated grouped validation
+- Feature-set comparisons, metric ablations, session bootstrap intervals, and high-velocity diagnostics
+- Statcast bridge for whiff, chase, hard-hit, and pitcher run value with baseball-valid rate denominators
 - Static HTML report at `reports/mvp_report.html`
 - Optional Streamlit app at `app.py`
 - Unit tests under `tests/`
@@ -30,13 +32,17 @@ Current local model result on OpenBiomechanics fastball data:
 - train: 292 rows / 75 sessions
 - test: 119 rows / 25 sessions
 - baseline RMSE: 4.33 mph
-- ridge RMSE: 3.15 mph
-- ridge R2: 0.46
+- ridge engineered-metrics holdout RMSE: 2.98 mph
+- ridge engineered-metrics holdout R2: 0.51
+- repeated grouped-CV ridge engineered-metrics RMSE: 3.51 mph
+- repeated grouped-CV raw metric-input RMSE: 3.18 mph
 - strongest current signal: `kinetic_chain_transfer_score`
+- key current weakness: engineered composites are interpretable but trail raw inputs in repeated CV
+- high-velocity weakness: 90+ mph pitches are underpredicted by about 3.08 mph on the current holdout
 
 Current Statcast bridge uses a capped Baseball Savant range sample: 25,000 pitch rows across April 24-30, 2025 in the current local data. Treat this as a stronger pipeline sample, not as a final full-season baseball conclusion.
 
-The next source of truth for planned rigor work is `docs/FUTURE_IMPROVEMENTS.md`.
+The source of truth for implemented rigor work and remaining upgrades is `docs/FUTURE_IMPROVEMENTS.md`.
 
 ## Commands
 
@@ -88,12 +94,11 @@ The defensible framing is:
 
 Prioritize these before adding visual polish. See `docs/FUTURE_IMPROVEMENTS.md` for the full documented plan:
 
-1. Replace the single holdout split with grouped K-fold cross-validation by `session`.
-2. Compare ridge against dependency-free baseline, OLS, ridge, and kNN models.
-3. Add bootstrap confidence intervals for RMSE, MAE, R2, and permutation importance.
-4. Add residual diagnostics by velocity band and session.
-5. Use a larger Statcast sample and aggregate by pitch type / pitcher / game context.
-6. Improve the report narrative so it clearly distinguishes MVP result, sample limitation, and next private-data extension.
+1. Add chunked Baseball Savant ingestion for a reproducible 4-8 week or full-season Statcast sample.
+2. Investigate why raw biomechanical inputs outperform engineered composites; revise metric formulas only if ablations support it.
+3. Improve high-velocity performance for the 90+ mph band.
+4. Add visual plots for CV performance, residuals, permutation importance, and Statcast outcomes.
+5. Keep the report narrative honest: velocity modeling in OpenBiomechanics, separate public Statcast bridge, no direct MLB player linkage.
 
 ## Coding Constraints
 

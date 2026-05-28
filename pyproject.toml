@@ -1,7 +1,7 @@
 [project]
 name = "mlb-biomechanics"
 version = "0.1.0"
-description = "Pitching biomechanics metrics and MLB performance bridge for a portfolio MVP."
+description = "Pitching biomechanics metrics, velocity modeling, and a public Statcast bridge."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
@@ -14,4 +14,3 @@ pythonpath = ["src"]
 
 [tool.ruff]
 line-length = 100
-

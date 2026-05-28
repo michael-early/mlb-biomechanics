@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MLB Biomechanics MVP Report</title>
+  <title>MLB Biomechanics Velocity Study</title>
   <style>
     :root {
       --ink: #18212f;
@@ -179,8 +179,8 @@
   <header>
     <div class="header-inner">
       <p class="eyebrow">MLB Quant Rigor Upgrade | Baseball biomechanics and ML</p>
-      <h1>MLB Biomechanics Performance Report</h1>
-      <p class="subtitle">A reproducible pitching-analysis pipeline that converts public motion-capture variables into interpretable biomechanical metrics, validates fastball velocity models with grouped session splits, and bridges pitch traits to Statcast outcomes.</p>
+      <h1>MLB Biomechanics Velocity Study</h1>
+      <p class="subtitle">A reproducible pitching-analysis pipeline that converts public motion-capture variables into interpretable biomechanical metrics, validates fastball velocity models with grouped session splits, and separately summarizes public Statcast pitch-trait outcomes.</p>
       <div class="actions">
         <a class="button" href="https://github.com/michael-early/mlb-biomechanics" target="_blank" rel="noopener">View full project on GitHub</a>
       </div>
@@ -197,7 +197,7 @@
       <div class="metric-grid">
         <div class="metric"><span>Biomechanics source</span><strong>OpenBiomechanics public pitching metrics</strong></div>
         <div class="metric"><span>Performance source</span><strong>Baseball Savant Statcast CSV</strong></div>
-        <div class="metric"><span>Velocity RMSE lift</span><strong>1.18 mph</strong></div>
+        <div class="metric"><span>Velocity RMSE lift</span><strong>1.35 mph</strong></div>
         <div class="metric"><span>Validation groups</span><strong>100 sessions</strong></div>
       </div>
       <div class="metric-grid">
@@ -207,17 +207,80 @@
         <div class="metric"><span>Primary signal</span><strong>Kinetic-chain transfer</strong></div>
       </div>
       <div class="insight">
-        <strong>Main baseball finding:</strong> kinetic-chain transfer is the strongest engineered signal for fastball velocity in the public OpenBiomechanics sample. The holdout ridge model reduces pitch-speed error from 4.33 mph to 3.15 mph, and the grouped validation framework is designed to avoid mixing pitches from the same session across train and test.
+        <strong>Main baseball finding:</strong> kinetic-chain transfer is the strongest engineered signal for fastball velocity in the public OpenBiomechanics sample. The holdout ridge model reduces pitch-speed error from 4.33 mph to 2.98 mph, and validation is grouped by session so a pitcher's repeated throws do not leak across train and test.
       </div>
+    </section>
+
+    <section class="section">
+      <h2>Model Card</h2>
+      <p class="muted">This section defines the modeling boundary, validation unit, and intended interpretation before presenting feature-level results.</p>
+      <div class="table-wrap"><table class="dataframe data-table compact">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Item</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Primary target</td>
+      <td>pitch_speed_mph</td>
+    </tr>
+    <tr>
+      <td>Biomechanics validation unit</td>
+      <td>session</td>
+    </tr>
+    <tr>
+      <td>Holdout rows</td>
+      <td>119</td>
+    </tr>
+    <tr>
+      <td>Holdout sessions</td>
+      <td>25</td>
+    </tr>
+    <tr>
+      <td>Baseline RMSE</td>
+      <td>4.33 mph</td>
+    </tr>
+    <tr>
+      <td>Ridge RMSE</td>
+      <td>2.98 mph</td>
+    </tr>
+    <tr>
+      <td>Primary model</td>
+      <td>ridge regression, alpha=10.0</td>
+    </tr>
+    <tr>
+      <td>CV design</td>
+      <td>repeated grouped K-fold by session with inner alpha selection</td>
+    </tr>
+    <tr>
+      <td>Bootstrap unit</td>
+      <td>session</td>
+    </tr>
+    <tr>
+      <td>Statcast rows</td>
+      <td>25,000</td>
+    </tr>
+    <tr>
+      <td>Statcast denominator policy</td>
+      <td>whiff/swing, chase/out-of-zone, hard-hit/batted-ball</td>
+    </tr>
+    <tr>
+      <td>Use boundary</td>
+      <td>predictive association only; no causal or identity-linked MLB claim</td>
+    </tr>
+  </tbody>
+</table></div>
     </section>
 
     <section class="section">
       <h2>Velocity Model</h2>
       <div class="metric-grid">
         <div class="metric"><span>Baseline RMSE</span><strong>4.33 mph</strong></div>
-        <div class="metric"><span>Ridge RMSE</span><strong>3.15 mph</strong></div>
-        <div class="metric"><span>Ridge MAE</span><strong>2.61 mph</strong></div>
-        <div class="metric"><span>Selected alpha</span><strong>100.0</strong></div>
+        <div class="metric"><span>Ridge RMSE</span><strong>2.98 mph</strong></div>
+        <div class="metric"><span>Ridge MAE</span><strong>2.40 mph</strong></div>
+        <div class="metric"><span>Selected alpha</span><strong>10.0</strong></div>
       </div>
     </section>
 
@@ -239,39 +302,39 @@
   <tbody>
     <tr>
       <td>knn_k7</td>
-      <td>4.005</td>
-      <td>0.373</td>
-      <td>3.678</td>
-      <td>4.332</td>
-      <td>3.219</td>
-      <td>0.266</td>
+      <td>4.146</td>
+      <td>0.465</td>
+      <td>3.910</td>
+      <td>4.381</td>
+      <td>3.298</td>
+      <td>0.175</td>
     </tr>
     <tr>
       <td>mean_baseline</td>
-      <td>4.763</td>
-      <td>0.264</td>
-      <td>4.532</td>
-      <td>4.995</td>
-      <td>3.782</td>
-      <td>-0.039</td>
+      <td>4.722</td>
+      <td>0.414</td>
+      <td>4.512</td>
+      <td>4.931</td>
+      <td>3.833</td>
+      <td>-0.037</td>
     </tr>
     <tr>
       <td>ols</td>
-      <td>3.493</td>
-      <td>0.443</td>
-      <td>3.104</td>
-      <td>3.881</td>
-      <td>2.663</td>
-      <td>0.438</td>
+      <td>3.502</td>
+      <td>0.643</td>
+      <td>3.177</td>
+      <td>3.827</td>
+      <td>2.716</td>
+      <td>0.396</td>
     </tr>
     <tr>
       <td>ridge_alpha_grid</td>
-      <td>3.487</td>
-      <td>0.440</td>
-      <td>3.102</td>
-      <td>3.873</td>
-      <td>2.662</td>
-      <td>0.440</td>
+      <td>3.505</td>
+      <td>0.620</td>
+      <td>3.192</td>
+      <td>3.819</td>
+      <td>2.717</td>
+      <td>0.397</td>
     </tr>
   </tbody>
 </table></div>
@@ -279,7 +342,7 @@
 
     <section class="section">
       <h2>Bootstrap Uncertainty</h2>
-      <p class="muted">Holdout metrics are bootstrapped over prediction rows to show rough uncertainty around the reported point estimates.</p>
+      <p class="muted">Holdout metrics are bootstrapped by session to respect repeated pitches within the same held-out session.</p>
       <div class="table-wrap"><table class="dataframe data-table compact">
   <thead>
     <tr style="text-align: right;">
@@ -288,29 +351,273 @@
       <th>CI low</th>
       <th>CI high</th>
       <th>Bootstraps</th>
+      <th>Unit</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td>rmse</td>
-      <td>3.153</td>
-      <td>2.819</td>
-      <td>3.491</td>
+      <td>2.982</td>
+      <td>2.062</td>
+      <td>3.833</td>
       <td>500</td>
+      <td>session</td>
     </tr>
     <tr>
       <td>mae</td>
-      <td>2.609</td>
-      <td>2.298</td>
-      <td>2.948</td>
+      <td>2.401</td>
+      <td>1.807</td>
+      <td>3.015</td>
       <td>500</td>
+      <td>session</td>
     </tr>
     <tr>
       <td>r2</td>
-      <td>0.456</td>
-      <td>0.299</td>
-      <td>0.563</td>
+      <td>0.513</td>
+      <td>0.009</td>
+      <td>0.750</td>
       <td>500</td>
+      <td>session</td>
+    </tr>
+  </tbody>
+</table></div>
+    </section>
+
+    <section class="section">
+      <h2>Feature-Set Comparison</h2>
+      <p class="muted">This checks whether engineered composites add value beyond the raw metric inputs and whether simple interaction terms help.</p>
+      <div class="table-wrap"><table class="dataframe data-table compact">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Feature set</th>
+      <th>Features</th>
+      <th>RMSE mean</th>
+      <th>RMSE std</th>
+      <th>CI low</th>
+      <th>CI high</th>
+      <th>Delta vs best</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>raw_metric_inputs</td>
+      <td>21</td>
+      <td>3.182</td>
+      <td>0.581</td>
+      <td>2.888</td>
+      <td>3.476</td>
+      <td>0.000</td>
+    </tr>
+    <tr>
+      <td>raw_plus_engineered</td>
+      <td>28</td>
+      <td>3.192</td>
+      <td>0.534</td>
+      <td>2.922</td>
+      <td>3.463</td>
+      <td>0.010</td>
+    </tr>
+    <tr>
+      <td>engineered_interactions</td>
+      <td>12</td>
+      <td>3.254</td>
+      <td>0.702</td>
+      <td>2.899</td>
+      <td>3.609</td>
+      <td>0.072</td>
+    </tr>
+    <tr>
+      <td>engineered_metrics</td>
+      <td>7</td>
+      <td>3.505</td>
+      <td>0.620</td>
+      <td>3.192</td>
+      <td>3.819</td>
+      <td>0.323</td>
+    </tr>
+  </tbody>
+</table></div>
+    </section>
+
+    <section class="section">
+      <h2>Metric Ablation</h2>
+      <p class="muted">Rows show how repeated grouped-CV RMSE changes when each engineered metric is removed from the ridge model. Positive delta means removing that metric made the model worse.</p>
+      <div class="table-wrap"><table class="dataframe data-table compact">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Feature removed</th>
+      <th>Features</th>
+      <th>RMSE mean</th>
+      <th>MAE mean</th>
+      <th>R2 mean</th>
+      <th>RMSE delta</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>kinetic_chain_transfer_score</td>
+      <td>6</td>
+      <td>4.293</td>
+      <td>3.430</td>
+      <td>0.133</td>
+      <td>0.787</td>
+    </tr>
+    <tr>
+      <td>arm_speed_score</td>
+      <td>6</td>
+      <td>3.644</td>
+      <td>2.842</td>
+      <td>0.348</td>
+      <td>0.139</td>
+    </tr>
+    <tr>
+      <td>release_consistency_score</td>
+      <td>6</td>
+      <td>3.518</td>
+      <td>2.711</td>
+      <td>0.392</td>
+      <td>0.012</td>
+    </tr>
+    <tr>
+      <td>sequencing_efficiency</td>
+      <td>6</td>
+      <td>3.508</td>
+      <td>2.718</td>
+      <td>0.399</td>
+      <td>0.002</td>
+    </tr>
+    <tr>
+      <td>none</td>
+      <td>7</td>
+      <td>3.505</td>
+      <td>2.717</td>
+      <td>0.397</td>
+      <td>0.000</td>
+    </tr>
+    <tr>
+      <td>lead_leg_block_score</td>
+      <td>6</td>
+      <td>3.494</td>
+      <td>2.722</td>
+      <td>0.400</td>
+      <td>-0.012</td>
+    </tr>
+    <tr>
+      <td>lower_body_force_score</td>
+      <td>6</td>
+      <td>3.453</td>
+      <td>2.670</td>
+      <td>0.413</td>
+      <td>-0.052</td>
+    </tr>
+    <tr>
+      <td>hip_shoulder_separation_score</td>
+      <td>6</td>
+      <td>3.422</td>
+      <td>2.684</td>
+      <td>0.425</td>
+      <td>-0.084</td>
+    </tr>
+  </tbody>
+</table></div>
+    </section>
+
+    <section class="section">
+      <h2>Metric Correlations</h2>
+      <p class="muted">Descriptive Pearson correlations show which raw and engineered biomechanics fields move with pitch velocity before multivariable modeling.</p>
+      <div class="table-wrap"><table class="dataframe data-table compact">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Feature</th>
+      <th>Type</th>
+      <th>Velocity corr</th>
+      <th>Rows</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>elbow_transfer_fp_br</td>
+      <td>raw_metric_input</td>
+      <td>0.691</td>
+      <td>411</td>
+    </tr>
+    <tr>
+      <td>kinetic_chain_transfer_score</td>
+      <td>engineered_metric</td>
+      <td>0.656</td>
+      <td>411</td>
+    </tr>
+    <tr>
+      <td>shoulder_transfer_fp_br</td>
+      <td>raw_metric_input</td>
+      <td>0.651</td>
+      <td>411</td>
+    </tr>
+    <tr>
+      <td>thorax_distal_transfer_fp_br</td>
+      <td>raw_metric_input</td>
+      <td>0.645</td>
+      <td>411</td>
+    </tr>
+    <tr>
+      <td>lead_grf_mag_max</td>
+      <td>raw_metric_input</td>
+      <td>0.420</td>
+      <td>403</td>
+    </tr>
+    <tr>
+      <td>lead_grf_z_max</td>
+      <td>raw_metric_input</td>
+      <td>0.401</td>
+      <td>403</td>
+    </tr>
+    <tr>
+      <td>lower_body_force_score</td>
+      <td>engineered_metric</td>
+      <td>0.356</td>
+      <td>411</td>
+    </tr>
+    <tr>
+      <td>max_torso_rotational_velo</td>
+      <td>raw_metric_input</td>
+      <td>0.328</td>
+      <td>411</td>
+    </tr>
+    <tr>
+      <td>lead_leg_block_score</td>
+      <td>engineered_metric</td>
+      <td>0.321</td>
+      <td>411</td>
+    </tr>
+    <tr>
+      <td>max_shoulder_internal_rotational_velo</td>
+      <td>raw_metric_input</td>
+      <td>0.313</td>
+      <td>411</td>
+    </tr>
+    <tr>
+      <td>rotation_hip_shoulder_separation_fp</td>
+      <td>raw_metric_input</td>
+      <td>0.305</td>
+      <td>411</td>
+    </tr>
+    <tr>
+      <td>hip_shoulder_separation_score</td>
+      <td>engineered_metric</td>
+      <td>0.304</td>
+      <td>411</td>
+    </tr>
+    <tr>
+      <td>arm_slot</td>
+      <td>raw_metric_input</td>
+      <td>-0.301</td>
+      <td>411</td>
+    </tr>
+    <tr>
+      <td>max_rotation_hip_shoulder_separation</td>
+      <td>raw_metric_input</td>
+      <td>0.289</td>
+      <td>411</td>
     </tr>
   </tbody>
 </table></div>
@@ -333,58 +640,58 @@
   <tbody>
     <tr>
       <td>kinetic_chain_transfer_score</td>
-      <td>1.068</td>
-      <td>0.140</td>
-      <td>0.858</td>
-      <td>1.350</td>
+      <td>1.505</td>
+      <td>0.177</td>
+      <td>1.220</td>
+      <td>1.863</td>
       <td>50</td>
     </tr>
     <tr>
       <td>arm_speed_score</td>
-      <td>0.152</td>
-      <td>0.036</td>
-      <td>0.089</td>
-      <td>0.207</td>
+      <td>0.220</td>
+      <td>0.056</td>
+      <td>0.118</td>
+      <td>0.315</td>
       <td>50</td>
     </tr>
     <tr>
       <td>lower_body_force_score</td>
-      <td>0.099</td>
-      <td>0.089</td>
-      <td>-0.056</td>
-      <td>0.289</td>
+      <td>0.093</td>
+      <td>0.087</td>
+      <td>-0.068</td>
+      <td>0.253</td>
       <td>50</td>
     </tr>
     <tr>
       <td>sequencing_efficiency</td>
-      <td>0.042</td>
-      <td>0.032</td>
-      <td>-0.018</td>
-      <td>0.095</td>
+      <td>0.067</td>
+      <td>0.033</td>
+      <td>0.002</td>
+      <td>0.126</td>
       <td>50</td>
     </tr>
     <tr>
       <td>release_consistency_score</td>
-      <td>0.024</td>
-      <td>0.017</td>
-      <td>-0.007</td>
-      <td>0.053</td>
+      <td>0.034</td>
+      <td>0.022</td>
+      <td>-0.005</td>
+      <td>0.078</td>
       <td>50</td>
     </tr>
     <tr>
       <td>lead_leg_block_score</td>
-      <td>0.022</td>
-      <td>0.026</td>
-      <td>-0.027</td>
-      <td>0.068</td>
+      <td>0.004</td>
+      <td>0.007</td>
+      <td>-0.009</td>
+      <td>0.017</td>
       <td>50</td>
     </tr>
     <tr>
       <td>hip_shoulder_separation_score</td>
-      <td>0.012</td>
-      <td>0.052</td>
-      <td>-0.095</td>
-      <td>0.103</td>
+      <td>-0.041</td>
+      <td>0.055</td>
+      <td>-0.144</td>
+      <td>0.058</td>
       <td>50</td>
     </tr>
   </tbody>
@@ -403,38 +710,38 @@
   <tbody>
     <tr>
       <td>kinetic_chain_transfer_score</td>
-      <td>1.804</td>
-      <td>100.000</td>
-    </tr>
-    <tr>
-      <td>hip_shoulder_separation_score</td>
-      <td>0.787</td>
-      <td>100.000</td>
-    </tr>
-    <tr>
-      <td>lower_body_force_score</td>
-      <td>0.752</td>
-      <td>100.000</td>
+      <td>2.616</td>
+      <td>10.000</td>
     </tr>
     <tr>
       <td>arm_speed_score</td>
-      <td>0.595</td>
-      <td>100.000</td>
+      <td>0.916</td>
+      <td>10.000</td>
+    </tr>
+    <tr>
+      <td>hip_shoulder_separation_score</td>
+      <td>0.793</td>
+      <td>10.000</td>
+    </tr>
+    <tr>
+      <td>lower_body_force_score</td>
+      <td>0.695</td>
+      <td>10.000</td>
     </tr>
     <tr>
       <td>sequencing_efficiency</td>
-      <td>0.402</td>
-      <td>100.000</td>
-    </tr>
-    <tr>
-      <td>lead_leg_block_score</td>
-      <td>0.265</td>
-      <td>100.000</td>
+      <td>0.415</td>
+      <td>10.000</td>
     </tr>
     <tr>
       <td>release_consistency_score</td>
-      <td>0.200</td>
-      <td>100.000</td>
+      <td>0.250</td>
+      <td>10.000</td>
+    </tr>
+    <tr>
+      <td>lead_leg_block_score</td>
+      <td>0.075</td>
+      <td>10.000</td>
     </tr>
   </tbody>
 </table></div>
@@ -459,33 +766,85 @@
       <td>80-85</td>
       <td>41</td>
       <td>82.49</td>
-      <td>-2.22</td>
-      <td>2.25</td>
-      <td>2.89</td>
+      <td>-2.28</td>
+      <td>2.42</td>
+      <td>3.32</td>
     </tr>
     <tr>
       <td>85-90</td>
       <td>42</td>
       <td>87.59</td>
-      <td>0.99</td>
-      <td>2.26</td>
-      <td>2.89</td>
+      <td>0.42</td>
+      <td>2.37</td>
+      <td>2.82</td>
     </tr>
     <tr>
       <td>90-95</td>
       <td>20</td>
       <td>91.20</td>
-      <td>4.14</td>
-      <td>4.14</td>
-      <td>4.32</td>
+      <td>3.08</td>
+      <td>3.08</td>
+      <td>3.31</td>
     </tr>
     <tr>
       <td>&lt;80</td>
       <td>16</td>
       <td>78.41</td>
-      <td>-2.52</td>
-      <td>2.52</td>
-      <td>2.70</td>
+      <td>-1.57</td>
+      <td>1.57</td>
+      <td>1.83</td>
+    </tr>
+  </tbody>
+</table></div>
+      <h3>High-Velocity Error Check</h3>
+      <p class="muted">This explicitly checks the 90+ mph region, where underprediction is the most baseball-relevant failure mode.</p>
+      <div class="table-wrap"><table class="dataframe data-table compact">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Group</th>
+      <th>Rows</th>
+      <th>Actual mph</th>
+      <th>Predicted mph</th>
+      <th>Mean residual</th>
+      <th>MAE</th>
+      <th>RMSE</th>
+      <th>Underpredicted</th>
+      <th>Overpredicted</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>all_pitches</td>
+      <td>119</td>
+      <td>85.20</td>
+      <td>85.53</td>
+      <td>-0.33</td>
+      <td>2.40</td>
+      <td>2.98</td>
+      <td>37.0%</td>
+      <td>63.0%</td>
+    </tr>
+    <tr>
+      <td>&lt;90_mph</td>
+      <td>99</td>
+      <td>83.99</td>
+      <td>85.01</td>
+      <td>-1.02</td>
+      <td>2.26</td>
+      <td>2.91</td>
+      <td>24.2%</td>
+      <td>75.8%</td>
+    </tr>
+    <tr>
+      <td>90+_mph</td>
+      <td>20</td>
+      <td>91.20</td>
+      <td>88.12</td>
+      <td>3.08</td>
+      <td>3.08</td>
+      <td>3.31</td>
+      <td>100.0%</td>
+      <td>0.0%</td>
     </tr>
   </tbody>
 </table></div>
@@ -543,17 +902,26 @@
 
     <section class="section">
       <h2>Statcast Performance Bridge</h2>
-      <p>The bridge summarizes how public pitch traits relate to outcomes. With a Baseball Savant CSV, whiffs, chases, hard-hit balls, and pitcher run value are derived from standard Statcast columns.</p>
+      <p>The bridge summarizes how public pitch traits relate to outcomes. With a Baseball Savant CSV, whiff rate is computed per swing, chase rate per out-of-zone pitch, and hard-hit rate per batted ball.</p>
       <div class="table-wrap"><table class="dataframe data-table">
   <thead>
     <tr style="text-align: right;">
       <th>Pitch</th>
       <th>Pitches</th>
       <th>Avg velo</th>
+      <th>avg_release_extension</th>
+      <th>avg_pfx_x</th>
+      <th>avg_pfx_z</th>
+      <th>Swings</th>
+      <th>whiffs</th>
+      <th>OOZ</th>
+      <th>chases</th>
+      <th>BIP</th>
+      <th>hard_hits</th>
+      <th>Pitcher RV</th>
       <th>Whiff</th>
       <th>Chase</th>
       <th>Hard hit</th>
-      <th>Pitcher RV</th>
     </tr>
   </thead>
   <tbody>
@@ -561,91 +929,232 @@
       <td>FF</td>
       <td>7428</td>
       <td>94.17</td>
-      <td>9.5%</td>
-      <td>9.3%</td>
-      <td>8.8%</td>
+      <td>6.510851</td>
+      <td>-0.328829</td>
+      <td>1.324806</td>
+      <td>3560</td>
+      <td>707</td>
+      <td>3171</td>
+      <td>693</td>
+      <td>2667</td>
+      <td>653</td>
       <td>-0.00</td>
+      <td>19.9%</td>
+      <td>21.9%</td>
+      <td>24.5%</td>
     </tr>
     <tr>
       <td>SI</td>
       <td>4072</td>
       <td>93.36</td>
-      <td>5.9%</td>
-      <td>9.6%</td>
-      <td>10.8%</td>
+      <td>6.397495</td>
+      <td>-0.623364</td>
+      <td>0.616812</td>
+      <td>1796</td>
+      <td>241</td>
+      <td>1686</td>
+      <td>391</td>
+      <td>1447</td>
+      <td>440</td>
       <td>0.00</td>
+      <td>13.4%</td>
+      <td>23.2%</td>
+      <td>30.4%</td>
     </tr>
     <tr>
       <td>SL</td>
       <td>3497</td>
       <td>85.68</td>
-      <td>16.2%</td>
-      <td>16.9%</td>
-      <td>8.3%</td>
+      <td>6.374121</td>
+      <td>0.118336</td>
+      <td>0.156019</td>
+      <td>1709</td>
+      <td>568</td>
+      <td>1872</td>
+      <td>592</td>
+      <td>1060</td>
+      <td>291</td>
       <td>-0.00</td>
+      <td>33.2%</td>
+      <td>31.6%</td>
+      <td>27.5%</td>
     </tr>
     <tr>
       <td>CH</td>
       <td>2597</td>
       <td>85.63</td>
-      <td>14.5%</td>
-      <td>19.0%</td>
-      <td>7.5%</td>
+      <td>6.411205</td>
+      <td>-0.553073</td>
+      <td>0.392307</td>
+      <td>1271</td>
+      <td>377</td>
+      <td>1564</td>
+      <td>493</td>
+      <td>816</td>
+      <td>196</td>
       <td>-0.00</td>
+      <td>29.7%</td>
+      <td>31.5%</td>
+      <td>24.0%</td>
     </tr>
     <tr>
       <td>ST</td>
       <td>2076</td>
       <td>82.17</td>
-      <td>13.6%</td>
-      <td>16.2%</td>
-      <td>6.2%</td>
+      <td>6.315703</td>
+      <td>0.705747</td>
+      <td>0.123940</td>
+      <td>909</td>
+      <td>283</td>
+      <td>1184</td>
+      <td>337</td>
+      <td>585</td>
+      <td>128</td>
       <td>-0.00</td>
+      <td>31.1%</td>
+      <td>28.5%</td>
+      <td>21.9%</td>
     </tr>
     <tr>
       <td>FC</td>
       <td>1909</td>
       <td>89.61</td>
-      <td>10.6%</td>
-      <td>12.7%</td>
-      <td>8.3%</td>
+      <td>6.397224</td>
+      <td>0.088229</td>
+      <td>0.712661</td>
+      <td>914</td>
+      <td>202</td>
+      <td>912</td>
+      <td>242</td>
+      <td>679</td>
+      <td>158</td>
       <td>-0.01</td>
+      <td>22.1%</td>
+      <td>26.5%</td>
+      <td>23.3%</td>
     </tr>
     <tr>
       <td>CU</td>
       <td>1625</td>
       <td>79.30</td>
-      <td>12.1%</td>
-      <td>16.1%</td>
-      <td>6.6%</td>
+      <td>6.418277</td>
+      <td>0.481065</td>
+      <td>-0.836320</td>
+      <td>678</td>
+      <td>197</td>
+      <td>915</td>
+      <td>262</td>
+      <td>446</td>
+      <td>108</td>
       <td>0.00</td>
+      <td>29.1%</td>
+      <td>28.6%</td>
+      <td>24.2%</td>
     </tr>
     <tr>
       <td>FS</td>
       <td>903</td>
       <td>86.48</td>
-      <td>19.5%</td>
-      <td>24.9%</td>
-      <td>7.8%</td>
+      <td>6.577741</td>
+      <td>-0.755249</td>
+      <td>0.258494</td>
+      <td>494</td>
+      <td>176</td>
+      <td>574</td>
+      <td>225</td>
+      <td>287</td>
+      <td>70</td>
       <td>0.01</td>
+      <td>35.6%</td>
+      <td>39.2%</td>
+      <td>24.4%</td>
     </tr>
     <tr>
       <td>KC</td>
       <td>417</td>
       <td>82.24</td>
-      <td>14.9%</td>
-      <td>17.3%</td>
-      <td>8.4%</td>
+      <td>6.414388</td>
+      <td>0.553789</td>
+      <td>-0.893094</td>
+      <td>194</td>
+      <td>62</td>
+      <td>233</td>
+      <td>72</td>
+      <td>118</td>
+      <td>35</td>
       <td>-0.01</td>
+      <td>32.0%</td>
+      <td>30.9%</td>
+      <td>29.7%</td>
     </tr>
     <tr>
       <td>FA</td>
       <td>98</td>
       <td>64.63</td>
-      <td>3.1%</td>
-      <td>7.1%</td>
-      <td>11.2%</td>
+      <td>4.548980</td>
+      <td>-0.736224</td>
+      <td>1.118061</td>
+      <td>37</td>
+      <td>3</td>
+      <td>50</td>
+      <td>7</td>
+      <td>34</td>
+      <td>11</td>
       <td>-0.06</td>
+      <td>8.1%</td>
+      <td>14.0%</td>
+      <td>32.4%</td>
+    </tr>
+  </tbody>
+</table></div>
+      <h3>Sample Manifest</h3>
+      <div class="table-wrap"><table class="dataframe data-table compact">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Field</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>rows</td>
+      <td>25000</td>
+    </tr>
+    <tr>
+      <td>date_min</td>
+      <td>2025-04-24</td>
+    </tr>
+    <tr>
+      <td>date_max</td>
+      <td>2025-04-30</td>
+    </tr>
+    <tr>
+      <td>pitch_types</td>
+      <td>16</td>
+    </tr>
+    <tr>
+      <td>swings</td>
+      <td>11727</td>
+    </tr>
+    <tr>
+      <td>out_of_zone_pitches</td>
+      <td>12391</td>
+    </tr>
+    <tr>
+      <td>batted_balls</td>
+      <td>8257</td>
+    </tr>
+    <tr>
+      <td>run_value_rows</td>
+      <td>24966</td>
+    </tr>
+    <tr>
+      <td>pitcher_pitch_type_rows</td>
+      <td>1769</td>
+    </tr>
+    <tr>
+      <td>rate_denominators</td>
+      <td>whiff/swing, chase/out-of-zone, hard-hit/batted-ball</td>
     </tr>
   </tbody>
 </table></div>

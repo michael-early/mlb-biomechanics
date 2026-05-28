@@ -33,6 +33,12 @@ def build_mvp() -> dict[str, str]:
     bootstrap_intervals_path = REPORTS_DIR / "tables" / "bootstrap_intervals.csv"
     residual_diagnostics_path = REPORTS_DIR / "tables" / "residual_diagnostics.csv"
     alpha_selection_path = REPORTS_DIR / "tables" / "ridge_alpha_selection.csv"
+    feature_set_comparison_path = REPORTS_DIR / "tables" / "feature_set_comparison.csv"
+    metric_ablation_path = REPORTS_DIR / "tables" / "metric_ablation.csv"
+    metric_correlations_path = REPORTS_DIR / "tables" / "metric_correlations.csv"
+    velocity_band_performance_path = REPORTS_DIR / "tables" / "velocity_band_performance.csv"
+    high_velocity_error_path = REPORTS_DIR / "tables" / "high_velocity_error_analysis.csv"
+    statcast_manifest_path = REPORTS_DIR / "tables" / "statcast_sample_manifest.csv"
     model_metrics_path = PROCESSED_DIR / "velocity_model_metrics.json"
     data_sources_path = PROCESSED_DIR / "data_sources.json"
     report_path = REPORTS_DIR / "mvp_report.html"
@@ -48,10 +54,20 @@ def build_mvp() -> dict[str, str]:
     velocity_results["bootstrap_intervals"].to_csv(bootstrap_intervals_path, index=False)
     velocity_results["residual_diagnostics"].to_csv(residual_diagnostics_path, index=False)
     velocity_results["alpha_selection"].to_csv(alpha_selection_path, index=False)
+    velocity_results["feature_set_comparison"].to_csv(feature_set_comparison_path, index=False)
+    velocity_results["metric_ablation"].to_csv(metric_ablation_path, index=False)
+    velocity_results["metric_correlations"].to_csv(metric_correlations_path, index=False)
+    velocity_results["velocity_band_performance"].to_csv(
+        velocity_band_performance_path, index=False
+    )
+    velocity_results["high_velocity_error_analysis"].to_csv(high_velocity_error_path, index=False)
+    statcast_results["sample_manifest"].to_csv(statcast_manifest_path, index=False)
 
     model_metrics = {
         "train_rows": velocity_results["train_rows"],
         "test_rows": velocity_results["test_rows"],
+        "train_sessions": velocity_results["train_sessions"],
+        "test_sessions": velocity_results["test_sessions"],
         "baseline": velocity_results["baseline"],
         "ridge": velocity_results["ridge"],
         "sessions": velocity_results["sessions"],
@@ -68,6 +84,12 @@ def build_mvp() -> dict[str, str]:
                 "statcast_date_min": statcast_results["sample_summary"]["date_min"],
                 "statcast_date_max": statcast_results["sample_summary"]["date_max"],
                 "statcast_pitch_types": statcast_results["sample_summary"]["pitch_types"],
+                "statcast_swings": statcast_results["sample_summary"]["swings"],
+                "statcast_out_of_zone_pitches": statcast_results["sample_summary"][
+                    "out_of_zone_pitches"
+                ],
+                "statcast_batted_balls": statcast_results["sample_summary"]["batted_balls"],
+                "statcast_rate_denominators": "whiff/swing, chase/out-of-zone, hard-hit/batted-ball",
             },
             indent=2,
         ),
@@ -88,4 +110,10 @@ def build_mvp() -> dict[str, str]:
         "bootstrap_intervals": str(bootstrap_intervals_path),
         "residual_diagnostics": str(residual_diagnostics_path),
         "alpha_selection": str(alpha_selection_path),
+        "feature_set_comparison": str(feature_set_comparison_path),
+        "metric_ablation": str(metric_ablation_path),
+        "metric_correlations": str(metric_correlations_path),
+        "velocity_band_performance": str(velocity_band_performance_path),
+        "high_velocity_error_analysis": str(high_velocity_error_path),
+        "statcast_manifest": str(statcast_manifest_path),
     }
